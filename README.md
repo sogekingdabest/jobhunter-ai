@@ -32,9 +32,10 @@ The repository currently contains the backend and frontend foundations:
 - `GET /health`;
 - a responsive React application shell with light, dark, and system themes;
 - unit and component tests;
+- PostgreSQL persistence infrastructure and versioned migrations;
 - linting, formatting, static typing, production builds, and CI.
 
-PostgreSQL, Docker, API integration, and product domains are intentionally outside this foundation.
+Product entities, API integration, and domain workflows are intentionally outside this foundation.
 
 ## Requirements
 
@@ -42,6 +43,7 @@ PostgreSQL, Docker, API integration, and product domains are intentionally outsi
 - [uv](https://docs.astral.sh/uv/)
 - Node.js 24 LTS
 - pnpm 11
+- Docker Desktop or another Docker Engine with Compose
 
 ## Setup
 
@@ -51,6 +53,23 @@ pnpm --dir frontend install
 ```
 
 Copy `.env.example` to `.env` if you want to override local settings. Never commit `.env` files.
+
+## Run PostgreSQL
+
+Start the local database and wait for its healthcheck:
+
+```bash
+docker compose up -d --wait database
+```
+
+Apply every pending schema migration:
+
+```bash
+uv run --directory backend alembic upgrade head
+```
+
+The default development database is available on `localhost:5432`. The credentials in
+`.env.example` are local-only defaults and must not be reused in deployed environments.
 
 ## Run the API
 
@@ -85,6 +104,9 @@ uv run --directory backend mypy src tests
 uv run --directory backend pytest
 pnpm --dir frontend check
 ```
+
+PostgreSQL integration tests run when `JOBHUNTER_TEST_DATABASE_URL` is set. CI always runs them
+against the same PostgreSQL major version used by the local Compose service.
 
 Storybook interaction and accessibility tests run in Chromium. Install its managed test browser locally with:
 

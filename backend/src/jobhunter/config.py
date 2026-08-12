@@ -3,6 +3,7 @@
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,6 +19,9 @@ class Settings(BaseSettings):
     app_name: str = "JobHunter AI"
     environment: Literal["development", "test", "production"] = "development"
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+    database_url: PostgresDsn = PostgresDsn(
+        "postgresql+psycopg://jobhunter:jobhunter@127.0.0.1:5432/jobhunter"
+    )
 
 
 @lru_cache
