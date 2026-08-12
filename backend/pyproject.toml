@@ -1,0 +1,88 @@
+[project]
+name = "jobhunter-ai-backend"
+version = "0.1.0"
+description = "Backend API for JobHunter AI"
+requires-python = ">=3.12,<3.13"
+license = "Apache-2.0"
+dependencies = [
+  "fastapi>=0.116,<1.0",
+  "pydantic-settings>=2.10,<3.0",
+  "uvicorn[standard]>=0.35,<1.0",
+]
+
+[dependency-groups]
+dev = [
+  "httpx2>=2.0,<3.0",
+  "mypy>=1.17,<2.0",
+  "pre-commit>=4.3,<5.0",
+  "pytest>=8.4,<9.0",
+  "pytest-cov>=6.2,<7.0",
+  "ruff>=0.12,<1.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/jobhunter"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers --cov=jobhunter --cov-report=term-missing --cov-fail-under=100"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["jobhunter"]
+
+[tool.coverage.report]
+exclude_also = [
+  "if TYPE_CHECKING:",
+]
+show_missing = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "A",
+  "ANN",
+  "ARG",
+  "ASYNC",
+  "B",
+  "C4",
+  "DTZ",
+  "E",
+  "F",
+  "FAST",
+  "I",
+  "N",
+  "PERF",
+  "PIE",
+  "PL",
+  "PT",
+  "PTH",
+  "RUF",
+  "S",
+  "SIM",
+  "T20",
+  "TRY",
+  "UP",
+  "W",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = "uvicorn.*"
+ignore_missing_imports = true
