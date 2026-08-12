@@ -31,6 +31,16 @@ pnpm --dir frontend install
 pnpm --dir frontend exec playwright install chromium
 ```
 
+Start PostgreSQL and apply migrations before running integration tests:
+
+```bash
+docker compose up -d --wait database
+uv run --directory backend alembic upgrade head
+```
+
+Set `JOBHUNTER_TEST_DATABASE_URL` to a disposable PostgreSQL database when you want the local
+pytest run to include destructive migration round-trip tests. Never point it at shared data.
+
 Run checks:
 
 ```bash
