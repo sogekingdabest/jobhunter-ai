@@ -2,16 +2,8 @@ name: Backend quality
 
 on:
   pull_request:
-    paths:
-      - "backend/**"
-      - ".github/workflows/backend-quality.yml"
-      - ".pre-commit-config.yaml"
   push:
     branches: [main]
-    paths:
-      - "backend/**"
-      - ".github/workflows/backend-quality.yml"
-      - ".pre-commit-config.yaml"
 
 permissions:
   contents: read
