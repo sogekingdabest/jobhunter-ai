@@ -18,6 +18,22 @@ jobs:
     timeout-minutes: 20
     env:
       STORYBOOK_DISABLE_TELEMETRY: "1"
+      JOBHUNTER_DATABASE_URL: postgresql+psycopg://jobhunter:jobhunter@127.0.0.1:5432/jobhunter_test
+      JOBHUNTER_TEST_DATABASE_URL: postgresql+psycopg://jobhunter:jobhunter@127.0.0.1:5432/jobhunter_test
+    services:
+      postgres:
+        image: postgres:18.4-alpine3.24
+        env:
+          POSTGRES_DB: jobhunter_test
+          POSTGRES_USER: jobhunter
+          POSTGRES_PASSWORD: jobhunter
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U jobhunter -d jobhunter_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Check out repository
@@ -62,6 +78,11 @@ jobs:
 
       - name: Test backend
         run: uv run --directory backend pytest
+
+      - name: Verify database migrations
+        run: |
+          uv run --directory backend alembic current --check-heads
+          uv run --directory backend alembic check
 
       - name: Check frontend
         run: pnpm --dir frontend check
