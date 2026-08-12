@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from uuid import UUID, uuid4
+from uuid import UUID
 
 import pytest
 from alembic import command
@@ -136,7 +136,7 @@ def test_candidate_profile_replace_rejects_invalid_domain_fact() -> None:
     with TestClient(app) as client:
         created = client.post("/candidate-profiles", json=payload()).json()
         invalid = payload()
-        duplicate_id = str(uuid4())
+        duplicate_id = created["projects"][0]["id"]
         invalid["projects"] = [
             {"id": duplicate_id, "name": "One"},
             {"id": duplicate_id, "name": "Two"},

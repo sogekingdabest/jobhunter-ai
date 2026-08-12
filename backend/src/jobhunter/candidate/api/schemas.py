@@ -80,6 +80,23 @@ class CandidateProfileInput(CandidateSchema):
     competencies: list[CompetencyInput] = Field(default_factory=list, max_length=300)
     languages: list[LanguageInput] = Field(default_factory=list, max_length=50)
 
+    @property
+    def entity_ids(self) -> frozenset[UUID]:
+        """Return only nested IDs explicitly supplied by the client."""
+
+        return frozenset(
+            item.id
+            for collection in (
+                self.work_experiences,
+                self.education,
+                self.projects,
+                self.competencies,
+                self.languages,
+            )
+            for item in collection
+            if item.id is not None
+        )
+
     def to_domain(
         self,
         *,

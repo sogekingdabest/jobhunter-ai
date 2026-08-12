@@ -59,3 +59,19 @@ class CandidateProfile:
             "competency",
         )
         ensure_unique_text((item.language for item in self.languages), "language")
+
+    @property
+    def entity_ids(self) -> frozenset[UUID]:
+        """Return every nested identity currently owned by this aggregate."""
+
+        return frozenset(
+            item.id
+            for collection in (
+                self.work_experiences,
+                self.education,
+                self.projects,
+                self.competencies,
+                self.languages,
+            )
+            for item in collection
+        )

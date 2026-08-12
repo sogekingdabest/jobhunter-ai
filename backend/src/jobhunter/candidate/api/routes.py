@@ -41,6 +41,8 @@ async def create_candidate_profile(
 ) -> CandidateProfileResponse:
     """Create a profile from facts explicitly entered by the user."""
 
+    if payload.entity_ids:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unexpected_entity_id")
     try:
         candidate = payload.to_domain()
     except ValueError as error:
@@ -68,6 +70,8 @@ async def replace_candidate_profile(
 
     try:
         existing = await service.get(profile_id)
+        if not payload.entity_ids.issubset(existing.entity_ids):
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "unknown_entity_id")
         try:
             candidate = payload.to_domain(profile_id=profile_id, created_at=existing.created_at)
         except ValueError as error:

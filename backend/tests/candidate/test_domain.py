@@ -16,6 +16,7 @@ from jobhunter.candidate.domain.profile import CandidateProfile
 from tests.candidate.factories import make_profile
 
 EXPECTED_MONTHS_EXPERIENCE = 36
+EXPECTED_NESTED_ENTITIES = 5
 
 
 def test_complete_candidate_profile_is_valid() -> None:
@@ -23,6 +24,7 @@ def test_complete_candidate_profile_is_valid() -> None:
 
     assert profile.full_name == "Ada Lovelace"
     assert profile.competencies[0].months_experience == EXPECTED_MONTHS_EXPERIENCE
+    assert len(profile.entity_ids) == EXPECTED_NESTED_ENTITIES
 
 
 @pytest.mark.parametrize(

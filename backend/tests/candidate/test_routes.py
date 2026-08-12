@@ -71,3 +71,21 @@ async def test_routes_translate_domain_validation_errors() -> None:
 
     assert create_error.value.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
     assert replace_error.value.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+
+
+@pytest.mark.asyncio
+async def test_routes_reject_client_owned_or_foreign_nested_ids() -> None:
+    service = CandidateProfileService(InMemoryCandidateRepository())
+    valid = CandidateProfileInput.model_validate(sample_payload())
+    created = await create_candidate_profile(valid, service)
+    with_id_data = sample_payload()
+    with_id_data["projects"] = [{"id": str(uuid4()), "name": "Untrusted identity"}]
+    with_id = CandidateProfileInput.model_validate(with_id_data)
+
+    with pytest.raises(HTTPException) as create_error:
+        await create_candidate_profile(with_id, service)
+    with pytest.raises(HTTPException) as replace_error:
+        await replace_candidate_profile(created.id, with_id, service)
+
+    assert create_error.value.detail == "unexpected_entity_id"
+    assert replace_error.value.detail == "unknown_entity_id"

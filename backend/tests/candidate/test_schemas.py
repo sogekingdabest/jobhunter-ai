@@ -63,6 +63,7 @@ def test_input_preserves_explicit_id_and_creation_time_on_replace() -> None:
     assert profile.id == profile_id
     assert profile.projects[0].id == item_id
     assert profile.created_at == created_at
+    assert CandidateProfileInput.model_validate(data).entity_ids == frozenset({item_id})
 
 
 def test_input_forbids_unknown_fields() -> None:
