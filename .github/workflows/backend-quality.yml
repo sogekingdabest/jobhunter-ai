@@ -1,4 +1,4 @@
-name: Backend quality
+name: Quality
 
 on:
   pull_request:
@@ -9,17 +9,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: backend-quality-${{ github.ref }}
+  group: quality-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    defaults:
-      run:
-        working-directory: backend
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository
@@ -32,18 +28,36 @@ jobs:
           enable-cache: true
           cache-dependency-glob: backend/uv.lock
 
-      - name: Install dependencies
-        run: uv sync --locked --all-groups
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.16.0
 
-      - name: Lint
-        run: uv run ruff check .
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
-      - name: Check formatting
-        run: uv run ruff format --check .
+      - name: Install backend dependencies
+        run: uv sync --directory backend --locked --all-groups
 
-      - name: Type check
-        run: uv run mypy src tests
+      - name: Install frontend dependencies
+        run: pnpm --dir frontend install --frozen-lockfile
 
-      - name: Test
-        run: uv run pytest
+      - name: Lint backend
+        run: uv run --directory backend ruff check .
+
+      - name: Check backend formatting
+        run: uv run --directory backend ruff format --check .
+
+      - name: Type check backend
+        run: uv run --directory backend mypy src tests
+
+      - name: Test backend
+        run: uv run --directory backend pytest
+
+      - name: Check frontend
+        run: pnpm --dir frontend check
 
