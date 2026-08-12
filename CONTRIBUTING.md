@@ -28,6 +28,7 @@ Install dependencies:
 ```bash
 uv sync --directory backend --all-groups
 pnpm --dir frontend install
+pnpm --dir frontend exec playwright install chromium
 ```
 
 Run checks:
@@ -38,6 +39,12 @@ uv run --directory backend ruff format --check .
 uv run --directory backend mypy src tests
 uv run --directory backend pytest
 pnpm --dir frontend check
+```
+
+Develop shared UI components in Storybook:
+
+```bash
+pnpm --dir frontend storybook
 ```
 
 ## Pull request checklist
