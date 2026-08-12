@@ -1,0 +1,1 @@
+"""Source document storage adapters."""

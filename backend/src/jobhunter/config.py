@@ -1,9 +1,10 @@
 """Typed application configuration."""
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
-from pydantic import PostgresDsn
+from pydantic import PositiveInt, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +23,8 @@ class Settings(BaseSettings):
     database_url: PostgresDsn = PostgresDsn(
         "postgresql+psycopg://jobhunter:jobhunter@127.0.0.1:5432/jobhunter"
     )
+    document_storage_path: Path = Path("storage/documents")
+    document_max_size_bytes: PositiveInt = 10 * 1024 * 1024
 
 
 @lru_cache
