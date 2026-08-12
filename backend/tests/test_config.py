@@ -6,7 +6,8 @@ from pydantic import ValidationError
 from jobhunter.config import Settings
 
 
-def test_settings_have_safe_defaults() -> None:
+def test_settings_have_safe_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("JOBHUNTER_DATABASE_URL", raising=False)
     settings = Settings(_env_file=None)
 
     assert settings.app_name == "JobHunter AI"
