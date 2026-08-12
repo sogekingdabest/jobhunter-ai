@@ -1,0 +1,73 @@
+# Internal project documentation
+/docs/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.venv/
+venv/
+.uv-cache/
+.pre-commit-cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# JavaScript / TypeScript
+node_modules/
+.pnpm-store/
+*.tsbuildinfo
+frontend/dist/
+coverage/
+playwright-report/
+test-results/
+storybook-static/
+
+# Local data and personal documents
+/data/
+/uploads/
+/storage/
+*.pdf
+*.doc
+*.docx
+
+# Local AI models and generated model artifacts
+/models/
+*.gguf
+*.onnx
+*.safetensors
+*.litertlm
+*.task
+
+# Generated local analysis
+/graphify-out/
+
+# IDE and operating system
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+*.tmp
