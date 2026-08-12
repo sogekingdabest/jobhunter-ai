@@ -33,9 +33,10 @@ The repository currently contains the backend and frontend foundations:
 - a responsive React application shell with light, dark, and system themes;
 - unit and component tests;
 - PostgreSQL persistence infrastructure and versioned migrations;
+- document provenance models and root-confined local document storage;
 - linting, formatting, static typing, production builds, and CI.
 
-Product entities, API integration, and domain workflows are intentionally outside this foundation.
+Candidate profiles, document upload endpoints, parsing, and AI workflows are not implemented yet.
 
 ## Requirements
 
@@ -70,6 +71,17 @@ uv run --directory backend alembic upgrade head
 
 The default development database is available on `localhost:5432`. The credentials in
 `.env.example` are local-only defaults and must not be reused in deployed environments.
+
+## Document storage
+
+Source document bytes are stored outside PostgreSQL under the configurable
+`JOBHUNTER_DOCUMENT_STORAGE_PATH`; the default is `storage/documents`. Database records retain
+only opaque storage keys, content-derived MIME types, sizes, SHA-256 hashes, processing state, and
+provenance metadata. User filenames and local source paths are not retained.
+
+Supported source formats are currently UTF-8 text, PDF, and DOCX, with a configurable default
+limit of 10 MiB. Format validation uses file signatures or container structure instead of trusting
+an extension or client-provided MIME type. Upload and parsing endpoints will be added separately.
 
 ## Run the API
 
