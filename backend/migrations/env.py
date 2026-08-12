@@ -10,7 +10,14 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from jobhunter.config import get_settings
+from jobhunter.documents.infrastructure.database.models import (
+    EvidenceSourceModel,
+    EvidenceSpanModel,
+    SourceDocumentModel,
+)
 from jobhunter.infrastructure.database.base import Base
+
+_document_models = (SourceDocumentModel, EvidenceSourceModel, EvidenceSpanModel)
 
 config = context.config
 
