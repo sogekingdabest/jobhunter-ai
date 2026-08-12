@@ -68,6 +68,14 @@ pnpm --dir frontend dev
 
 The web application is then available at `http://127.0.0.1:5173`.
 
+## Explore the design system
+
+```bash
+pnpm --dir frontend storybook
+```
+
+Storybook is available at `http://127.0.0.1:6006`. It documents accessible UI primitives, themes, interaction tests, and mocked network states without requiring the backend.
+
 ## Quality checks
 
 ```bash
@@ -76,6 +84,12 @@ uv run --directory backend ruff format --check .
 uv run --directory backend mypy src tests
 uv run --directory backend pytest
 pnpm --dir frontend check
+```
+
+Storybook interaction and accessibility tests run in Chromium. Install its managed test browser locally with:
+
+```bash
+pnpm --dir frontend exec playwright install chromium
 ```
 
 Run every configured hook with:

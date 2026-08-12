@@ -1,4 +1,5 @@
 import { Icon, type IconName } from "../shared/ui/Icon";
+import { Button } from "../shared/ui/Button";
 import { ThemeToggle } from "../shared/ui/ThemeToggle";
 
 const navigation: ReadonlyArray<{ label: string; icon: IconName }> = [
@@ -91,9 +92,13 @@ export function App() {
                 and tailor every application without inventing a thing.
               </p>
               <div className="hero-actions">
-                <button className="primary-button" type="button">
-                  Create master profile <span aria-hidden="true">→</span>
-                </button>
+                <Button
+                  className="primary-button"
+                  endIcon={<span aria-hidden="true">→</span>}
+                  size="large"
+                >
+                  Create master profile
+                </Button>
                 <span className="preview-label">Foundation preview</span>
               </div>
             </div>
