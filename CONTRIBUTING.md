@@ -41,6 +41,9 @@ uv run --directory backend alembic upgrade head
 Set `JOBHUNTER_TEST_DATABASE_URL` to a disposable PostgreSQL database when you want the local
 pytest run to include destructive migration round-trip tests. Never point it at shared data.
 
+Keep local document fixtures fictional and small. The `storage/` directory is ignored by Git;
+never place a real CV in a tracked path or use user-provided filenames as storage keys.
+
 Run checks:
 
 ```bash
