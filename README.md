@@ -3,7 +3,7 @@
 JobHunter AI is an open-source application for structuring a master CV, evaluating job opportunities, and tailoring resumes without inventing experience, skills, certifications, or achievements.
 
 > [!NOTE]
-> The project is in its initial bootstrap phase. Product features are not implemented yet.
+> The project is in its foundation phase. Product workflows are not implemented yet.
 
 ## Product principles
 
@@ -25,25 +25,29 @@ JobHunter AI is an open-source application for structuring a master CV, evaluati
 
 ## Current repository
 
-The first pull request contains only the backend foundation:
+The repository currently contains the backend and frontend foundations:
 
 - a minimal FastAPI application;
 - typed environment configuration;
 - `GET /health`;
-- unit/API tests;
-- linting, formatting, static typing, and CI.
+- a responsive React application shell with light, dark, and system themes;
+- unit and component tests;
+- linting, formatting, static typing, production builds, and CI.
 
-PostgreSQL, Docker, the frontend, and product domains are intentionally outside this bootstrap.
+PostgreSQL, Docker, API integration, and product domains are intentionally outside this foundation.
 
 ## Requirements
 
 - Python 3.12
 - [uv](https://docs.astral.sh/uv/)
+- Node.js 24 LTS
+- pnpm 11
 
 ## Setup
 
 ```bash
 uv sync --directory backend --all-groups
+pnpm --dir frontend install
 ```
 
 Copy `.env.example` to `.env` if you want to override local settings. Never commit `.env` files.
@@ -56,6 +60,14 @@ uv run --directory backend uvicorn jobhunter.main:app --reload
 
 The API is then available at `http://127.0.0.1:8000`; its health endpoint is `GET /health`.
 
+## Run the frontend
+
+```bash
+pnpm --dir frontend dev
+```
+
+The web application is then available at `http://127.0.0.1:5173`.
+
 ## Quality checks
 
 ```bash
@@ -63,6 +75,7 @@ uv run --directory backend ruff check .
 uv run --directory backend ruff format --check .
 uv run --directory backend mypy src tests
 uv run --directory backend pytest
+pnpm --dir frontend check
 ```
 
 Run every configured hook with:

@@ -27,6 +27,7 @@ Install dependencies:
 
 ```bash
 uv sync --directory backend --all-groups
+pnpm --dir frontend install
 ```
 
 Run checks:
@@ -36,13 +37,14 @@ uv run --directory backend ruff check .
 uv run --directory backend ruff format --check .
 uv run --directory backend mypy src tests
 uv run --directory backend pytest
+pnpm --dir frontend check
 ```
 
 ## Pull request checklist
 
 - The change is inside the agreed scope.
 - Tests cover meaningful success and failure paths.
-- Ruff, mypy, and pytest pass.
+- Ruff, mypy, pytest, ESLint, TypeScript, Vitest, and the production build pass.
 - No secret, CV, job application, or personal information is committed.
 - External content is treated as untrusted.
 - New dependencies have a concrete need and documented trade-off.
