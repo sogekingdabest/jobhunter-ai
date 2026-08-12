@@ -19,3 +19,15 @@ repos:
         language: system
         pass_filenames: false
         types: [python]
+      - id: frontend-lint
+        name: frontend lint
+        entry: pnpm --dir frontend lint
+        language: system
+        pass_filenames: false
+        files: ^frontend/.*\.(js|ts|tsx)$
+      - id: frontend-typecheck
+        name: frontend typecheck
+        entry: pnpm --dir frontend typecheck
+        language: system
+        pass_filenames: false
+        files: ^frontend/.*\.(js|ts|tsx)$
