@@ -40,6 +40,8 @@ The repository currently contains the backend and frontend foundations:
 - linting, formatting, static typing, production builds, and CI.
 - provider-neutral structured AI contracts, privacy gates, content-free invocation metadata, and
   a deterministic evaluation harness.
+- an opt-in browser AI laboratory with capability detection, isolated Workers, cancellable model
+  loading, and bilingual structured-output benchmarks.
 
 Document upload endpoints, structured CV extraction, matching, and AI workflows are not
 implemented yet.
@@ -119,8 +121,27 @@ outcome, and optional token counts; prompts, source text, and generated output a
 
 The current adapter is a deterministic offline fake for tests. Fictional golden fixtures measure
 schema validity, canonical exact match, and whether evidence quotes occur in their source text.
-Real model providers, production prompts, automatic CV extraction, and browser inference remain
-separate future increments.
+Production prompts, automatic CV extraction, and server/cloud provider adapters remain separate
+future increments; browser inference is currently isolated in the experimental laboratory below.
+
+## Browser AI laboratory
+
+The frontend includes an experimental, local-only runtime comparison. It detects WebGPU, WASM,
+secure-context, memory, and storage hints before enabling a model download. Each model entry pins
+its runtime, revision, license, expected size, language support, and structured-output capability.
+Downloads require an explicit checkbox and never fall back to cloud.
+
+- LiteRT-LM 0.15 runs the web-specific Gemma 4 E2B/E4B artifacts inside a dedicated Worker.
+- WebLLM 0.2.84 provides the reference JSON-Schema path with Llama 3.2 1B because Gemma 4 is not a
+  built-in WebLLM model yet.
+- English and Spanish fictional fixtures measure JSON parsing, schema adherence, time to first
+  token, total time, and reported throughput.
+
+The laboratory is a hardware benchmark, not a production CV workflow. Models are multi-gigabyte
+downloads and may exceed browser or GPU limits. LiteRT-LM's web API remains an early preview, and
+its npm version is deliberately pinned because the 0.16.0 publication did not contain its declared
+`dist`/`wasm` artifacts when this spike was completed. Cancellation during WebLLM initialization is
+best effort because its factory does not expose an initialized engine until loading finishes.
 
 ## Run the API
 

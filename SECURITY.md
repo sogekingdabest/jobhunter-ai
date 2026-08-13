@@ -28,5 +28,9 @@ Do not include real CVs, API keys, access tokens, or third-party personal inform
 - Cloud processing, provider retention, and provider training require separate explicit consent.
 - AI invocation telemetry must exclude instructions, input content, source documents, and model
   output; only non-sensitive operational metadata and categorical error codes may be recorded.
+- Browser model downloads require explicit size/license consent, use pinned artifact revisions,
+  run outside the UI thread, and expose cancellation and cache cleanup controls.
+- Browser runtime errors remain categorical; source prompts and generated text must not be copied
+  into error messages or telemetry.
 - Generated claims require provenance and deterministic validation before acceptance.
 
