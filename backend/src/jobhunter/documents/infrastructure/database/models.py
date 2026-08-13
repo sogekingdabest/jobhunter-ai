@@ -72,7 +72,8 @@ class EvidenceSourceModel(Base):
     __table_args__ = (
         CheckConstraint(
             "(source_type = 'document' AND source_document_id IS NOT NULL) OR "
-            "(source_type = 'user_statement' AND source_document_id IS NULL)",
+            "(source_type IN ('user_statement', 'job_offer') "
+            "AND source_document_id IS NULL)",
             name="source_document_type",
         ),
     )
