@@ -31,8 +31,8 @@ def valid_output() -> JSONObject:
                 "value": "Python",
                 "evidence": {
                     "quote": "Python",
-                    "start_offset": 81,
-                    "end_offset": 87,
+                    "start_offset": 79,
+                    "end_offset": 85,
                     "page_number": None,
                 },
                 "confidence": 0.99,

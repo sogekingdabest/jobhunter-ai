@@ -1,22 +1,11 @@
 """Candidate fact proposal contract for the later CV extraction workflow."""
 
-from enum import StrEnum
 from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from jobhunter.ai.domain.types import JSONObject
-
-
-class CandidateFactType(StrEnum):
-    """Kinds of profile facts an extractor may propose for human review."""
-
-    WORK_EXPERIENCE = "work_experience"
-    EDUCATION = "education"
-    PROJECT = "project"
-    CERTIFICATION = "certification"
-    COMPETENCY = "competency"
-    LANGUAGE = "language"
+from jobhunter.candidate.domain.facts import CandidateFactType
 
 
 class ContractModel(BaseModel):
