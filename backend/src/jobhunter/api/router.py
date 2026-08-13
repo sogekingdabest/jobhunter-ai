@@ -3,8 +3,10 @@
 from fastapi import APIRouter
 
 from jobhunter.api.routes.health import router as health_router
+from jobhunter.candidate.api.fact_extraction_routes import router as fact_extraction_router
 from jobhunter.candidate.api.routes import router as candidate_router
 
 api_router = APIRouter()
 api_router.include_router(health_router)
 api_router.include_router(candidate_router)
+api_router.include_router(fact_extraction_router)

@@ -10,6 +10,8 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from jobhunter.candidate.infrastructure.database.models import (
+    CandidateFactExtractionModel,
+    CandidateFactProposalModel,
     CandidateProfileModel,
     CompetencyModel,
     EducationModel,
@@ -27,6 +29,8 @@ from jobhunter.infrastructure.database.base import Base
 
 _document_models = (SourceDocumentModel, EvidenceSourceModel, EvidenceSpanModel)
 _candidate_models = (
+    CandidateFactExtractionModel,
+    CandidateFactProposalModel,
     CandidateProfileModel,
     WorkExperienceModel,
     EducationModel,

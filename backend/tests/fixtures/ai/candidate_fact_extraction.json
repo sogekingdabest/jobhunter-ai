@@ -10,7 +10,7 @@
         "evidence": {
           "quote": "Backend Engineer at Example Robotics",
           "start_offset": 25,
-          "end_offset": 63,
+          "end_offset": 61,
           "page_number": null
         },
         "confidence": 0.99
@@ -20,8 +20,8 @@
         "value": "Python",
         "evidence": {
           "quote": "Python",
-          "start_offset": 81,
-          "end_offset": 87,
+          "start_offset": 79,
+          "end_offset": 85,
           "page_number": null
         },
         "confidence": 0.99
@@ -38,7 +38,7 @@
         "evidence": {
           "quote": "Backend Engineer at Example Robotics",
           "start_offset": 25,
-          "end_offset": 63,
+          "end_offset": 61,
           "page_number": null
         },
         "confidence": 0.99
@@ -48,8 +48,8 @@
         "value": "Python",
         "evidence": {
           "quote": "Python",
-          "start_offset": 81,
-          "end_offset": 87,
+          "start_offset": 79,
+          "end_offset": 85,
           "page_number": null
         },
         "confidence": 0.99
