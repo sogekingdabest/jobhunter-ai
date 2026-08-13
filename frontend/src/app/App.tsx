@@ -1,6 +1,7 @@
 import { Icon, type IconName } from "../shared/ui/Icon";
 import { Button } from "../shared/ui/Button";
 import { ThemeToggle } from "../shared/ui/ThemeToggle";
+import { BrowserAILab } from "../features/browser-ai/BrowserAILab";
 
 const navigation: ReadonlyArray<{ label: string; icon: IconName }> = [
   { label: "Overview", icon: "compass" },
@@ -139,6 +140,7 @@ export function App() {
               ))}
             </div>
           </section>
+          <BrowserAILab />
         </main>
 
         <Navigation compact />

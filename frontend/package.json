@@ -23,6 +23,9 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build:storybook"
   },
   "dependencies": {
+    "@cfworker/json-schema": "^4.1.1",
+    "@litert-lm/core": "0.15.0",
+    "@mlc-ai/web-llm": "0.2.84",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
