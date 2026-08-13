@@ -1,0 +1,60 @@
+{
+  "case_id": "fictional_backend_profile",
+  "source_text": "Alex Example worked as a Backend Engineer at Example Robotics. Built APIs with Python and SQL.",
+  "expected": {
+    "contract_version": "1.0",
+    "facts": [
+      {
+        "fact_type": "work_experience",
+        "value": "Backend Engineer at Example Robotics",
+        "evidence": {
+          "quote": "Backend Engineer at Example Robotics",
+          "start_offset": 25,
+          "end_offset": 63,
+          "page_number": null
+        },
+        "confidence": 0.99
+      },
+      {
+        "fact_type": "competency",
+        "value": "Python",
+        "evidence": {
+          "quote": "Python",
+          "start_offset": 81,
+          "end_offset": 87,
+          "page_number": null
+        },
+        "confidence": 0.99
+      }
+    ],
+    "warnings": []
+  },
+  "actual": {
+    "contract_version": "1.0",
+    "facts": [
+      {
+        "fact_type": "work_experience",
+        "value": "Backend Engineer at Example Robotics",
+        "evidence": {
+          "quote": "Backend Engineer at Example Robotics",
+          "start_offset": 25,
+          "end_offset": 63,
+          "page_number": null
+        },
+        "confidence": 0.99
+      },
+      {
+        "fact_type": "competency",
+        "value": "Python",
+        "evidence": {
+          "quote": "Python",
+          "start_offset": 81,
+          "end_offset": 87,
+          "page_number": null
+        },
+        "confidence": 0.99
+      }
+    ],
+    "warnings": []
+  }
+}
