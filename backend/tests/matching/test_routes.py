@@ -14,7 +14,7 @@ from jobhunter.matching.api.routes import (
     get_service,
 )
 from jobhunter.matching.api.schemas import MatchAssessmentInput
-from jobhunter.matching.application.service import StructuredMatchingService
+from jobhunter.matching.application.service import MatchingService
 from tests.candidate.factories import make_profile
 from tests.jobs.factories import make_offer
 from tests.matching.test_service import service
@@ -77,4 +77,4 @@ def test_input_contract_forbids_extra_fields() -> None:
 def test_dependency_wires_sqlalchemy_adapters() -> None:
     matching = get_service(cast(AsyncSession, object()))
 
-    assert isinstance(matching, StructuredMatchingService)
+    assert isinstance(matching, MatchingService)

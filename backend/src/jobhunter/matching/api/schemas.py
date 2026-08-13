@@ -11,6 +11,7 @@ from jobhunter.matching.domain.assessments import (
     MatchOutcome,
     MatchRecommendation,
 )
+from jobhunter.matching.domain.semantic import SemanticSourceType
 
 
 class MatchSchema(BaseModel):
@@ -50,6 +51,15 @@ class RequirementGateResponse(MatchSchema):
     explanation_code: str
 
 
+class SemanticMatchEvidenceResponse(MatchSchema):
+    id: UUID
+    job_source_type: SemanticSourceType
+    job_source_id: UUID
+    candidate_source_type: SemanticSourceType
+    candidate_source_id: UUID
+    similarity: float
+
+
 class MatchAssessmentResponse(MatchSchema):
     id: UUID
     candidate_profile_id: UUID
@@ -60,6 +70,14 @@ class MatchAssessmentResponse(MatchSchema):
     job_content_fingerprint: str
     job_normalization_version: str
     score: float
+    structured_score: float
+    semantic_score: float | None
+    semantic_weight: float
+    embedding_provider: str | None
+    embedding_model: str | None
+    embedding_revision: str | None
+    embedding_dimensions: int | None
+    semantic_evidence: tuple[SemanticMatchEvidenceResponse, ...]
     recommendation: MatchRecommendation
     dimensions: tuple[MatchDimensionResponse, ...]
     gates: tuple[RequirementGateResponse, ...]

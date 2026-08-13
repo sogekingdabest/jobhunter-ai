@@ -5,6 +5,8 @@ from datetime import datetime
 from enum import StrEnum
 from uuid import UUID
 
+from jobhunter.matching.domain.semantic import SemanticMatchEvidence
+
 MAX_SCORE = 100
 FINGERPRINT_LENGTH = 64
 STRONG_MATCH_THRESHOLD = 80
@@ -133,17 +135,53 @@ class MatchAssessment:
     job_content_fingerprint: str
     job_normalization_version: str
     score: float
+    structured_score: float
+    semantic_score: float | None
+    semantic_weight: float
+    embedding_provider: str | None
+    embedding_model: str | None
+    embedding_revision: str | None
+    embedding_dimensions: int | None
+    semantic_evidence: tuple[SemanticMatchEvidence, ...]
     recommendation: MatchRecommendation
     dimensions: tuple[MatchDimension, ...]
     gates: tuple[RequirementGate, ...]
     assessed_at: datetime
 
-    def __post_init__(self) -> None:
+    def __post_init__(self) -> None:  # noqa: PLR0912
         if not self.policy_version.strip() or not self.taxonomy_version.strip():
             raise ValueError("missing_match_version")
         if len(self.job_content_fingerprint) != FINGERPRINT_LENGTH:
             raise ValueError("invalid_match_job_fingerprint")
         _validate_score(self.score, "invalid_match_score")
+        _validate_score(self.structured_score, "invalid_structured_match_score")
+        _validate_score(self.semantic_score, "invalid_semantic_match_score")
+        if not 0 <= self.semantic_weight < 1:
+            raise ValueError("invalid_semantic_weight")
+        semantic_metadata = (
+            self.embedding_provider,
+            self.embedding_model,
+            self.embedding_revision,
+            self.embedding_dimensions,
+        )
+        has_semantics = self.semantic_score is not None
+        if has_semantics != all(value is not None for value in semantic_metadata) or (
+            not has_semantics and any(value is not None for value in semantic_metadata)
+        ):
+            raise ValueError("inconsistent_embedding_metadata")
+        if has_semantics != bool(self.semantic_evidence):
+            raise ValueError("inconsistent_semantic_evidence")
+        if has_semantics != (self.semantic_weight > 0):
+            raise ValueError("inconsistent_semantic_weight")
+        expected_score = self.structured_score
+        if self.semantic_score is not None:
+            expected_score = round(
+                self.structured_score * (1 - self.semantic_weight)
+                + self.semantic_score * self.semantic_weight,
+                2,
+            )
+        if self.score != expected_score:
+            raise ValueError("inconsistent_hybrid_match_score")
         if len({item.name for item in self.dimensions}) != len(self.dimensions):
             raise ValueError("duplicate_match_dimension")
         if len({item.id for item in self.dimensions}) != len(self.dimensions):

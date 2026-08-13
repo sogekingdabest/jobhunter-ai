@@ -18,7 +18,7 @@ from jobhunter.matching.application.errors import (
     MatchCandidateNotFoundError,
     MatchJobOfferNotFoundError,
 )
-from jobhunter.matching.application.service import StructuredMatchingService
+from jobhunter.matching.application.service import MatchingService
 from jobhunter.matching.infrastructure.database.repository import (
     SqlAlchemyMatchAssessmentRepository,
 )
@@ -34,15 +34,15 @@ async def get_session(request: Request) -> AsyncIterator[AsyncSession]:
 
 def get_service(
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> StructuredMatchingService:
-    return StructuredMatchingService(
+) -> MatchingService:
+    return MatchingService(
         SqlAlchemyCandidateProfileRepository(session),
         SqlAlchemyJobOfferRepository(session),
         SqlAlchemyMatchAssessmentRepository(session),
     )
 
 
-Service = Annotated[StructuredMatchingService, Depends(get_service)]
+Service = Annotated[MatchingService, Depends(get_service)]
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

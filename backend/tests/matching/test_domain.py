@@ -96,13 +96,22 @@ def test_requirement_gate_requires_an_explanation() -> None:
         ("version", "missing_match_version"),
         ("fingerprint", "invalid_match_job_fingerprint"),
         ("score", "invalid_match_score"),
+        ("structured_score", "invalid_structured_match_score"),
+        ("semantic_score", "invalid_semantic_match_score"),
+        ("semantic_weight", "invalid_semantic_weight"),
+        ("metadata", "inconsistent_embedding_metadata"),
+        ("semantic_evidence", "inconsistent_semantic_evidence"),
+        ("semantic_weight_consistency", "inconsistent_semantic_weight"),
+        ("hybrid_score", "inconsistent_hybrid_match_score"),
         ("dimension_name", "duplicate_match_dimension"),
         ("dimension_id", "duplicate_match_dimension_id"),
         ("gate", "duplicate_requirement_gate"),
         ("recommendation", "inconsistent_match_recommendation"),
     ],
 )
-def test_match_assessment_rejects_inconsistent_state(mutation: str, error: str) -> None:
+def test_match_assessment_rejects_inconsistent_state(  # noqa: PLR0912
+    mutation: str, error: str
+) -> None:
     profile = make_profile()
     offer = make_offer()
     assessment = StructuredMatchingPolicy().assess(profile, offer)
@@ -126,6 +135,34 @@ def test_match_assessment_rejects_inconsistent_state(mutation: str, error: str) 
         changes = {"job_content_fingerprint": "bad"}
     elif mutation == "score":
         changes = {"score": -1}
+    elif mutation == "structured_score":
+        changes = {"structured_score": -1}
+    elif mutation == "semantic_score":
+        changes = {"semantic_score": 101}
+    elif mutation == "semantic_weight":
+        changes = {"semantic_weight": 1}
+    elif mutation == "metadata":
+        changes = {"embedding_provider": "fake"}
+    elif mutation == "semantic_evidence":
+        changes = {
+            "semantic_score": 50,
+            "semantic_weight": 0.25,
+            "embedding_provider": "fake",
+            "embedding_model": "fake",
+            "embedding_revision": "v1",
+            "embedding_dimensions": 3,
+        }
+    elif mutation == "semantic_weight_consistency":
+        changes = {
+            "semantic_score": 50,
+            "embedding_provider": "fake",
+            "embedding_model": "fake",
+            "embedding_revision": "v1",
+            "embedding_dimensions": 3,
+            "semantic_evidence": (object(),),
+        }
+    elif mutation == "hybrid_score":
+        changes = {"score": assessment.score - 1}
     elif mutation == "dimension_name":
         changes = {"dimensions": (assessment.dimensions[0], assessment.dimensions[0])}
     elif mutation == "dimension_id":

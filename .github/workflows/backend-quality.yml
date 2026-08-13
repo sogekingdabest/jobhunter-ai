@@ -22,7 +22,7 @@ jobs:
       JOBHUNTER_TEST_DATABASE_URL: postgresql+psycopg://jobhunter:jobhunter@127.0.0.1:5432/jobhunter_test
     services:
       postgres:
-        image: postgres:18.4-alpine3.24
+        image: pgvector/pgvector:0.8.6-pg18-trixie
         env:
           POSTGRES_DB: jobhunter_test
           POSTGRES_USER: jobhunter
