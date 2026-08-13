@@ -87,9 +87,16 @@ def test_evidence_source_enforces_origin_shape() -> None:
         source_document_id=None,
         created_at=NOW,
     )
+    external = EvidenceSource(
+        id=uuid4(),
+        source_type=EvidenceSourceType.JOB_OFFER,
+        source_document_id=None,
+        created_at=NOW,
+    )
 
     assert source.source_document_id == document_id
     assert statement.source_document_id is None
+    assert external.source_document_id is None
 
 
 @pytest.mark.parametrize(
@@ -97,6 +104,7 @@ def test_evidence_source_enforces_origin_shape() -> None:
     [
         (EvidenceSourceType.DOCUMENT, None, "missing_source_document"),
         (EvidenceSourceType.USER_STATEMENT, uuid4(), "unexpected_source_document"),
+        (EvidenceSourceType.JOB_OFFER, uuid4(), "unexpected_source_document"),
     ],
 )
 def test_evidence_source_rejects_inconsistent_origin(

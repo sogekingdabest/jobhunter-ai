@@ -34,6 +34,7 @@ class EvidenceSourceType(StrEnum):
 
     DOCUMENT = "document"
     USER_STATEMENT = "user_statement"
+    JOB_OFFER = "job_offer"
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,7 +80,7 @@ class EvidenceSource:
         has_document = self.source_document_id is not None
         if self.source_type is EvidenceSourceType.DOCUMENT and not has_document:
             raise ValueError("missing_source_document")
-        if self.source_type is EvidenceSourceType.USER_STATEMENT and has_document:
+        if self.source_type is not EvidenceSourceType.DOCUMENT and has_document:
             raise ValueError("unexpected_source_document")
 
 

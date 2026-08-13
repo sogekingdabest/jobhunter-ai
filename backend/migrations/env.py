@@ -26,6 +26,11 @@ from jobhunter.documents.infrastructure.database.models import (
     SourceDocumentModel,
 )
 from jobhunter.infrastructure.database.base import Base
+from jobhunter.jobs.infrastructure.database.models import (
+    JobOfferFieldModel,
+    JobOfferModel,
+    JobRequirementModel,
+)
 
 _document_models = (SourceDocumentModel, EvidenceSourceModel, EvidenceSpanModel)
 _candidate_models = (
@@ -38,6 +43,7 @@ _candidate_models = (
     CompetencyModel,
     LanguageProficiencyModel,
 )
+_job_models = (JobOfferModel, JobOfferFieldModel, JobRequirementModel)
 
 config = context.config
 
