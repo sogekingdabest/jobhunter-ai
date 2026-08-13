@@ -23,7 +23,9 @@ Do not include real CVs, API keys, access tokens, or third-party personal inform
 - DOCX parsing limits expanded archive size and uses hardened XML parsing; PDF parsing limits pages
   and extracted text output.
 - Job descriptions, documents, model output, and browser AI results are untrusted input.
-- Remote URL imports must defend against SSRF and unsafe redirects before that feature ships.
+- Remote URL imports reject non-public destinations at every redirect, pin connections to the
+  validated address, disable proxy/environment trust, and enforce strict redirect, size, and time
+  limits.
 - Local AI failures must not silently send data to a cloud provider.
 - Cloud processing, provider retention, and provider training require separate explicit consent.
 - AI invocation telemetry must exclude instructions, input content, source documents, and model
