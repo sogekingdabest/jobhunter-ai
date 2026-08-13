@@ -38,3 +38,24 @@ class InvalidStorageKeyError(DocumentError):
 
     def __init__(self) -> None:
         super().__init__("storage key must remain below the configured root")
+
+
+class InvalidDocumentError(DocumentError):
+    """Raised when a recognized document is malformed or unsafe to parse."""
+
+    def __init__(self) -> None:
+        super().__init__("document structure is invalid or exceeds parser safety limits")
+
+
+class EncryptedDocumentError(DocumentError):
+    """Raised when an encrypted document cannot be parsed without credentials."""
+
+    def __init__(self) -> None:
+        super().__init__("encrypted documents are not supported")
+
+
+class NoExtractableTextError(DocumentError):
+    """Raised when a valid document contains no machine-readable text."""
+
+    def __init__(self) -> None:
+        super().__init__("document contains no extractable text")
