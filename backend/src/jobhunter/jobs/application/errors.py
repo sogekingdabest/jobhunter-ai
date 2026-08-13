@@ -15,3 +15,19 @@ class UngroundedJobNormalizationError(ValueError):
 
 class IncompleteJobNormalizationError(ValueError):
     """Raised when inference ended before a complete structured response."""
+
+
+class UnsafeJobUrlError(ValueError):
+    """Raised when a URL could reach a non-public or unsupported destination."""
+
+
+class JobUrlFetchError(RuntimeError):
+    """Raised when a permitted remote resource cannot be retrieved."""
+
+
+class InvalidJobUrlContentError(ValueError):
+    """Raised when a response is too large, unsupported, or has no useful text."""
+
+
+class JobUrlContentChangedError(ValueError):
+    """Raised when reviewed URL content changed before import."""

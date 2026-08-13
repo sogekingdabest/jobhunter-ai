@@ -16,8 +16,10 @@ __pycache__/
 .venv/
 venv/
 .uv-cache/
+.uv-cache-*/
 .pre-commit-cache/
 .pytest_cache/
+.pytest-*/
 .mypy_cache/
 .ruff_cache/
 .coverage

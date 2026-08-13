@@ -5,6 +5,10 @@ from pydantic import ValidationError
 
 from jobhunter.config import Settings
 
+MAX_EXTRACTED_CHARACTERS = 100_000
+MAX_REDIRECTS = 5
+TOTAL_TIMEOUT_SECONDS = 20
+
 
 def test_settings_have_safe_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("JOBHUNTER_DATABASE_URL", raising=False)
@@ -18,6 +22,10 @@ def test_settings_have_safe_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     assert str(settings.document_storage_path).replace("\\", "/") == "storage/documents"
     assert settings.document_max_size_bytes == 10 * 1024 * 1024
+    assert settings.job_url_max_response_bytes == 2 * 1024 * 1024
+    assert settings.job_url_max_extracted_characters == MAX_EXTRACTED_CHARACTERS
+    assert settings.job_url_max_redirects == MAX_REDIRECTS
+    assert settings.job_url_total_timeout_seconds == TOTAL_TIMEOUT_SECONDS
 
 
 def test_settings_reject_unknown_environment() -> None:
@@ -33,3 +41,19 @@ def test_settings_reject_non_postgres_database() -> None:
 def test_settings_reject_non_positive_document_limit() -> None:
     with pytest.raises(ValidationError):
         Settings(document_max_size_bytes=0, _env_file=None)
+
+
+@pytest.mark.parametrize(
+    ("name", "value"),
+    [
+        ("job_url_max_response_bytes", 0),
+        ("job_url_max_extracted_characters", 0),
+        ("job_url_max_redirects", 11),
+        ("job_url_connect_timeout_seconds", 0),
+        ("job_url_read_timeout_seconds", 0),
+        ("job_url_total_timeout_seconds", 0),
+    ],
+)
+def test_settings_reject_unsafe_job_url_limits(name: str, value: int) -> None:
+    with pytest.raises(ValidationError):
+        Settings(**{name: value}, _env_file=None)  # type: ignore[arg-type]
