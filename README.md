@@ -38,6 +38,8 @@ The repository currently contains the backend and frontend foundations:
 - deterministic text extraction for UTF-8 TXT, text-layer PDF, and DOCX;
 - a provenance-aware candidate profile aggregate and manual CRUD API;
 - linting, formatting, static typing, production builds, and CI.
+- provider-neutral structured AI contracts, privacy gates, content-free invocation metadata, and
+  a deterministic evaluation harness.
 
 Document upload endpoints, structured CV extraction, matching, and AI workflows are not
 implemented yet.
@@ -102,6 +104,23 @@ and an explicit parser version. Parsed text is not persisted as another full cop
 Documents remain untrusted input. Validation must run before parsing, and parser failures are
 returned as domain errors without attempting repairs through an LLM. Upload and processing
 endpoints will be added separately.
+
+## AI contracts and evaluation
+
+AI integrations use a provider-neutral structured-generation port. Trusted application
+instructions and named input data are separate, and each input declares whether it is supplied by
+the user or comes from an untrusted external source. Provider responses must match a JSON Schema
+and the request/provider/model identity before application code can consume them.
+
+The privacy policy blocks cloud execution, provider retention, and provider training unless each
+capability has explicit consent. Local and browser execution do not silently fall back to cloud.
+Invocation events contain only operational metadata such as task, provider, model, duration,
+outcome, and optional token counts; prompts, source text, and generated output are excluded.
+
+The current adapter is a deterministic offline fake for tests. Fictional golden fixtures measure
+schema validity, canonical exact match, and whether evidence quotes occur in their source text.
+Real model providers, production prompts, automatic CV extraction, and browser inference remain
+separate future increments.
 
 ## Run the API
 

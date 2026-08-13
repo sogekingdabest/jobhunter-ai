@@ -25,5 +25,8 @@ Do not include real CVs, API keys, access tokens, or third-party personal inform
 - Job descriptions, documents, model output, and browser AI results are untrusted input.
 - Remote URL imports must defend against SSRF and unsafe redirects before that feature ships.
 - Local AI failures must not silently send data to a cloud provider.
+- Cloud processing, provider retention, and provider training require separate explicit consent.
+- AI invocation telemetry must exclude instructions, input content, source documents, and model
+  output; only non-sensitive operational metadata and categorical error codes may be recorded.
 - Generated claims require provenance and deterministic validation before acceptance.
 
