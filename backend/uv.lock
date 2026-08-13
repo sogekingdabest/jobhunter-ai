@@ -267,6 +267,7 @@ dependencies = [
     { name = "alembic" },
     { name = "defusedxml" },
     { name = "fastapi" },
+    { name = "httpx2" },
     { name = "jsonschema" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic-settings" },
@@ -277,7 +278,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx2" },
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "pytest" },
@@ -293,6 +293,7 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.18,<2.0" },
     { name = "defusedxml", specifier = ">=0.7,<1.0" },
     { name = "fastapi", specifier = ">=0.116,<1.0" },
+    { name = "httpx2", specifier = ">=2.0,<3.0" },
     { name = "jsonschema", specifier = ">=4.25,<5.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2,<4.0" },
     { name = "pydantic-settings", specifier = ">=2.10,<3.0" },
@@ -303,7 +304,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx2", specifier = ">=2.0,<3.0" },
     { name = "mypy", specifier = ">=1.17,<2.0" },
     { name = "pre-commit", specifier = ">=4.3,<5.0" },
     { name = "pytest", specifier = ">=8.4,<9.0" },

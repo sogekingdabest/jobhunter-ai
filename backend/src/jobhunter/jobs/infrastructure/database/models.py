@@ -37,6 +37,11 @@ class JobOfferModel(Base):
     __table_args__ = (
         CheckConstraint("length(raw_text) > 0", name="raw_text_present"),
         CheckConstraint("content_fingerprint ~ '^[0-9a-f]{64}$'", name="fingerprint_format"),
+        CheckConstraint(
+            "(source = 'manual' AND source_url IS NULL AND canonical_url IS NULL) OR "
+            "(source = 'url' AND length(source_url) > 0 AND length(canonical_url) > 0)",
+            name="source_urls_consistent",
+        ),
     )
 
     id: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
@@ -44,6 +49,8 @@ class JobOfferModel(Base):
         ForeignKey("evidence_sources.id", ondelete="RESTRICT"), unique=True
     )
     source: Mapped[JobSource] = mapped_column(domain_enum(JobSource))
+    source_url: Mapped[str | None] = mapped_column(Text)
+    canonical_url: Mapped[str | None] = mapped_column(Text)
     raw_text: Mapped[str] = mapped_column(Text)
     content_fingerprint: Mapped[str] = mapped_column(String(64), unique=True)
     normalization_version: Mapped[str] = mapped_column(String(20))

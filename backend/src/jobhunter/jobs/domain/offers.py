@@ -12,6 +12,7 @@ class JobSource(StrEnum):
     """Supported acquisition channels."""
 
     MANUAL = "manual"
+    URL = "url"
 
 
 class JobFieldName(StrEnum):
@@ -126,6 +127,8 @@ class JobOffer:
     id: UUID
     evidence_source_id: UUID
     source: JobSource
+    source_url: str | None
+    canonical_url: str | None
     raw_text: str
     content_fingerprint: str
     normalization_version: str
@@ -143,6 +146,17 @@ class JobOffer:
             raise ValueError("invalid_job_content_fingerprint")
         if any(not warning.strip() for warning in self.warnings):
             raise ValueError("empty_job_normalization_warning")
+        if self.source is JobSource.MANUAL and (
+            self.source_url is not None or self.canonical_url is not None
+        ):
+            raise ValueError("manual_job_offer_has_url")
+        if self.source is JobSource.URL and (
+            self.source_url is None
+            or self.canonical_url is None
+            or not self.source_url.strip()
+            or not self.canonical_url.strip()
+        ):
+            raise ValueError("url_job_offer_missing_url")
         if len({field.id for field in self.fields}) != len(self.fields):
             raise ValueError("duplicate_job_field_id")
         if len({field.name for field in self.fields}) != len(self.fields):

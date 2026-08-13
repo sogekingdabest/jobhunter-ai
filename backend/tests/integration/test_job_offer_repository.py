@@ -11,6 +11,7 @@ from alembic.config import Config
 
 from jobhunter.infrastructure.database.session import Database
 from jobhunter.jobs.application.normalization import ManualJobOfferService
+from jobhunter.jobs.domain.offers import JobSource
 from jobhunter.jobs.infrastructure.database.repository import SqlAlchemyJobOfferRepository
 from jobhunter.jobs.ports.repository import JobOfferRepositoryDuplicateError
 from tests.jobs.factories import JOB_TEXT, make_normalization
@@ -50,6 +51,18 @@ async def _exercise_repository(database_url: str) -> None:
             assert await repository.get_by_fingerprint(offer.content_fingerprint) == offer
             assert await repository.get_by_fingerprint("f" * 64) is None
             assert await repository.get(UUID(int=0)) is None
+
+            url_offer = await service.import_normalized(
+                f"{JOB_TEXT}\nURL reference: {uuid4()}",
+                make_normalization(),
+                source=JobSource.URL,
+                source_url="https://jobs.example.com/job",
+                canonical_url="https://jobs.example.com/jobs/backend",
+            )
+            stored_url_offer = await repository.get(url_offer.id)
+            assert stored_url_offer is not None
+            assert stored_url_offer.source is JobSource.URL
+            assert stored_url_offer.canonical_url == "https://jobs.example.com/jobs/backend"
 
         async with database.session() as session:
             duplicate_repository = SqlAlchemyJobOfferRepository(session)

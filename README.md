@@ -5,8 +5,8 @@ JobHunter AI is an open-source application for structuring a master CV, evaluati
 > [!NOTE]
 > The project is being built incrementally. Candidate profiles can now be managed through the API;
 > deterministic document parsing and grounded CV fact review are available as backend foundations;
-> grounded manual job offer imports are also available; matching and resume generation are not
-> implemented yet.
+> grounded manual and public-URL job offer imports are also available; matching and resume
+> generation are not implemented yet.
 
 ## Product principles
 
@@ -45,6 +45,7 @@ The repository currently contains the backend and frontend foundations:
 - grounded structured CV fact proposals with exact evidence spans and explicit human review.
 - grounded manual job offer imports with normalized fields, classified requirements, and
   deterministic content deduplication.
+- SSRF-resistant public-URL previews and imports with bounded deterministic text extraction.
 - an opt-in browser AI laboratory with capability detection, isolated Workers, cancellable model
   loading, and bilingual structured-output benchmarks.
 
@@ -144,7 +145,7 @@ from overwriting each other. Acceptance does not silently write incomplete model
 master profile. The current fake adapter makes the workflow testable offline. A document-processing
 endpoint and real provider selection will be composed in a later increment.
 
-## Manual job offer imports
+## Grounded job offer imports
 
 Pasted offers are stored with their original text and a canonical SHA-256 fingerprint. The API
 accepts the same versioned normalization contract from a browser, local, or future cloud runtime;
@@ -159,9 +160,21 @@ and output-format overrides, and the provider receives no tools. Schema validati
 evidence checks provide the enforceable boundary; prompt wording alone is not treated as a security
 control.
 
-Formatting- and case-equivalent pasted content resolves to the same fingerprint. PostgreSQL also
-enforces uniqueness, so concurrent imports cannot create duplicates. Import by URL, richer salary
-normalization, and production provider orchestration remain separate increments.
+Formatting- and case-equivalent content resolves to the same fingerprint. PostgreSQL also
+enforces uniqueness, so concurrent imports cannot create duplicates. Richer salary normalization
+and production provider orchestration remain separate increments.
+
+Public URL imports use a two-step workflow. `POST /job-offers/url/preview` retrieves and extracts
+the page for local or provider-neutral normalization. `POST /job-offers/url` refetches it and
+requires the preview fingerprint, so changed content is rejected before persistence. The stored
+offer retains both the requested URL and a same-origin canonical URL.
+
+Only HTTP(S) on standard ports is accepted. Every hostname and redirect is resolved before use;
+all returned addresses must be globally routable, and the connection is pinned to a validated IP
+to prevent DNS rebinding. HTTPS downgrades, credentials, fragments, proxies, environment trust,
+cookies across redirects, non-text responses, oversized bodies, excessive redirects, and slow
+responses are rejected. HTML extraction ignores executable and non-visible elements. This is a
+user-directed single-page fetcher, not a crawler, browser automation system, or anti-bot bypass.
 
 ## Browser AI laboratory
 
@@ -202,9 +215,11 @@ Grounded extraction review records expose:
 - `GET /candidate-fact-extractions/{extraction_id}`
 - `PATCH /candidate-fact-extractions/{extraction_id}/proposals/{proposal_id}`
 
-Grounded manual job offers expose:
+Grounded job offers expose:
 
 - `POST /job-offers/manual`
+- `POST /job-offers/url/preview`
+- `POST /job-offers/url`
 - `GET /job-offers/{offer_id}`
 
 `PUT` replaces the full profile. On updates, nested entries accept only IDs already owned by that

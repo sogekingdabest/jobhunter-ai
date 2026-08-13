@@ -62,6 +62,16 @@ class GroundedJobOffer:
     evidence_spans: tuple[EvidenceSpan, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class JobOfferAcquisition:
+    source: JobSource = JobSource.MANUAL
+    source_url: str | None = None
+    canonical_url: str | None = None
+
+
+_MANUAL_ACQUISITION = JobOfferAcquisition()
+
+
 class ManualJobOfferService:
     """Validate untrusted normalization output and persist one canonical offer."""
 
@@ -105,14 +115,25 @@ class ManualJobOfferService:
         return await self.import_normalized(raw_text, normalization)
 
     async def import_normalized(
-        self, raw_text: str, normalization: JobOfferNormalizationOutput
+        self,
+        raw_text: str,
+        normalization: JobOfferNormalizationOutput,
+        *,
+        source: JobSource = JobSource.MANUAL,
+        source_url: str | None = None,
+        canonical_url: str | None = None,
     ) -> JobOffer:
         """Import browser-, local-, or user-produced structured output safely."""
 
         fingerprint = job_content_fingerprint(raw_text)
         if await self._repository.get_by_fingerprint(fingerprint) is not None:
             raise DuplicateJobOfferError
-        grounded = self._ground(raw_text, normalization, fingerprint)
+        grounded = self._ground(
+            raw_text,
+            normalization,
+            fingerprint,
+            JobOfferAcquisition(source, source_url, canonical_url),
+        )
         try:
             return await self._repository.add(
                 grounded.offer,
@@ -133,6 +154,7 @@ class ManualJobOfferService:
         raw_text: str,
         normalization: JobOfferNormalizationOutput,
         fingerprint: str,
+        acquisition: JobOfferAcquisition = _MANUAL_ACQUISITION,
     ) -> GroundedJobOffer:
         now = self._clock()
         offer_id = self._id_factory()
@@ -186,7 +208,9 @@ class ManualJobOfferService:
         offer = JobOffer(
             id=offer_id,
             evidence_source_id=source.id,
-            source=JobSource.MANUAL,
+            source=acquisition.source,
+            source_url=acquisition.source_url,
+            canonical_url=acquisition.canonical_url,
             raw_text=raw_text,
             content_fingerprint=fingerprint,
             normalization_version=normalization.contract_version,

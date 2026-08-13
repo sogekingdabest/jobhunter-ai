@@ -29,6 +29,24 @@ class ManualJobOfferInput(JobSchema):
     normalization: JobOfferNormalizationOutput
 
 
+class JobUrlPreviewInput(JobSchema):
+    url: Annotated[str, Field(min_length=1, max_length=2_048)]
+
+
+class JobUrlPreviewResponse(JobSchema):
+    requested_url: str
+    final_url: str
+    canonical_url: str
+    raw_text: str
+    content_fingerprint: Annotated[str, Field(min_length=64, max_length=64)]
+    media_type: str
+
+
+class JobUrlImportInput(JobUrlPreviewInput):
+    expected_content_fingerprint: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+    normalization: JobOfferNormalizationOutput
+
+
 class JobOfferFieldResponse(JobSchema):
     id: UUID
     evidence_span_id: UUID
@@ -58,6 +76,8 @@ class JobOfferResponse(JobSchema):
     id: UUID
     evidence_source_id: UUID
     source: JobSource
+    source_url: str | None
+    canonical_url: str | None
     raw_text: str
     content_fingerprint: str
     normalization_version: str
