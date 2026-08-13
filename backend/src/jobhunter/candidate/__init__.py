@@ -1,0 +1,1 @@
+"""Candidate profile bounded context."""

@@ -9,6 +9,14 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from jobhunter.candidate.infrastructure.database.models import (
+    CandidateProfileModel,
+    CompetencyModel,
+    EducationModel,
+    LanguageProficiencyModel,
+    ProjectModel,
+    WorkExperienceModel,
+)
 from jobhunter.config import get_settings
 from jobhunter.documents.infrastructure.database.models import (
     EvidenceSourceModel,
@@ -18,6 +26,14 @@ from jobhunter.documents.infrastructure.database.models import (
 from jobhunter.infrastructure.database.base import Base
 
 _document_models = (SourceDocumentModel, EvidenceSourceModel, EvidenceSpanModel)
+_candidate_models = (
+    CandidateProfileModel,
+    WorkExperienceModel,
+    EducationModel,
+    ProjectModel,
+    CompetencyModel,
+    LanguageProficiencyModel,
+)
 
 config = context.config
 
