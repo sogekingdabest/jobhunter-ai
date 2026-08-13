@@ -1,0 +1,23 @@
+{
+  "model_candidate": "google/embeddinggemma-300M",
+  "languages": ["es", "en"],
+  "minimum_accuracy_at_one": 0.9,
+  "cases": [
+    {
+      "query": "Diseñar APIs backend robustas con Python",
+      "candidates": [
+        "Built reliable Python APIs and backend services",
+        "Created visual identity and marketing campaigns"
+      ],
+      "expected_first": 0
+    },
+    {
+      "query": "Operate cloud infrastructure and deployment pipelines",
+      "candidates": [
+        "Administré infraestructura cloud y pipelines CI/CD",
+        "Managed retail sales and customer support"
+      ],
+      "expected_first": 0
+    }
+  ]
+}
