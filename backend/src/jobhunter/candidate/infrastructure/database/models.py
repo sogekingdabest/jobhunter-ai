@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from enum import StrEnum
 from uuid import UUID
 
 from sqlalchemy import (
@@ -11,23 +12,29 @@ from sqlalchemy import (
     Date,
     DateTime,
     Enum,
+    Float,
     ForeignKey,
     Integer,
     String,
     Text,
+    UniqueConstraint,
     Uuid,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from jobhunter.candidate.domain.competencies import CompetencyCategory, LanguageLevel
+from jobhunter.candidate.domain.facts import (
+    CandidateFactType,
+    ExtractionStatus,
+    ProposalReviewStatus,
+)
 from jobhunter.candidate.domain.profile import RemotePreference
+from jobhunter.documents.infrastructure.database.models import EvidenceSpanModel
 from jobhunter.infrastructure.database.base import Base
 
 
-def domain_enum(
-    enum_type: type[CompetencyCategory] | type[LanguageLevel] | type[RemotePreference],
-) -> Enum:
+def domain_enum(enum_type: type[StrEnum]) -> Enum:
     """Persist StrEnum values rather than Python member names."""
 
     return Enum(
@@ -160,3 +167,73 @@ class LanguageProficiencyModel(CandidateChild, Base):
 
     language: Mapped[str] = mapped_column(String(100))
     level: Mapped[LanguageLevel] = mapped_column(domain_enum(LanguageLevel))
+
+
+class CandidateFactExtractionModel(Base):
+    """Persisted model invocation whose grounded proposals require human review."""
+
+    __tablename__ = "candidate_fact_extractions"
+    __table_args__ = (
+        CheckConstraint(
+            "(status = 'needs_review' AND completed_at IS NULL) OR "
+            "(status = 'reviewed' AND completed_at IS NOT NULL)",
+            name="completion_state",
+        ),
+        CheckConstraint("revision >= 0", name="non_negative_revision"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+    source_document_id: Mapped[UUID] = mapped_column(
+        ForeignKey("source_documents.id", ondelete="RESTRICT"), index=True
+    )
+    evidence_source_id: Mapped[UUID] = mapped_column(
+        ForeignKey("evidence_sources.id", ondelete="RESTRICT"), unique=True
+    )
+    contract_version: Mapped[str] = mapped_column(String(20))
+    provider: Mapped[str] = mapped_column(String(100))
+    model: Mapped[str] = mapped_column(String(200))
+    warnings: Mapped[list[str]] = mapped_column(JSON, default=list)
+    status: Mapped[ExtractionStatus] = mapped_column(domain_enum(ExtractionStatus))
+    revision: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    proposals: Mapped[list[CandidateFactProposalModel]] = relationship(
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="CandidateFactProposalModel.position",
+    )
+
+
+class CandidateFactProposalModel(Base):
+    """One exact-evidence-backed proposal and its irreversible review decision."""
+
+    __tablename__ = "candidate_fact_proposals"
+    __table_args__ = (
+        CheckConstraint("confidence >= 0 AND confidence <= 1", name="confidence_range"),
+        CheckConstraint(
+            "(review_status = 'needs_review' AND reviewed_at IS NULL) OR "
+            "(review_status IN ('accepted', 'rejected') AND reviewed_at IS NOT NULL)",
+            name="review_state",
+        ),
+        UniqueConstraint(
+            "extraction_id",
+            "position",
+            name="uq_candidate_fact_proposals_extraction_position",
+        ),
+        UniqueConstraint("evidence_span_id", name="uq_candidate_fact_proposals_evidence_span"),
+    )
+
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+    extraction_id: Mapped[UUID] = mapped_column(
+        ForeignKey("candidate_fact_extractions.id", ondelete="CASCADE"), index=True
+    )
+    evidence_span_id: Mapped[UUID] = mapped_column(
+        ForeignKey("evidence_spans.id", ondelete="RESTRICT")
+    )
+    evidence_span: Mapped[EvidenceSpanModel] = relationship(lazy="joined")
+    position: Mapped[int] = mapped_column(Integer)
+    fact_type: Mapped[CandidateFactType] = mapped_column(domain_enum(CandidateFactType))
+    value: Mapped[str] = mapped_column(Text)
+    confidence: Mapped[float] = mapped_column(Float)
+    review_status: Mapped[ProposalReviewStatus] = mapped_column(domain_enum(ProposalReviewStatus))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
