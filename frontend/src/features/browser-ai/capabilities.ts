@@ -12,8 +12,8 @@ export async function detectBrowserCapabilities(
   const estimate = await navigatorWithMemory.storage?.estimate().catch(() => undefined);
 
   return {
-    secureContext: browser.isSecureContext === true,
-    crossOriginIsolated: browser.crossOriginIsolated === true,
+    secureContext: browser.isSecureContext,
+    crossOriginIsolated: browser.crossOriginIsolated,
     webAssembly: typeof WebAssembly === "object",
     webGpu: "gpu" in navigatorWithMemory,
     hardwareConcurrency: navigatorWithMemory.hardwareConcurrency || null,
