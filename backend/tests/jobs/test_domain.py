@@ -10,6 +10,7 @@ import pytest
 from jobhunter.jobs.domain.offers import (
     EmploymentType,
     JobFieldName,
+    JobSource,
     RemoteType,
     Seniority,
 )
@@ -81,6 +82,21 @@ def test_child_invariants(target: str, changes: dict[str, object], error: str) -
 def test_offer_scalar_invariants(changes: dict[str, object], error: str) -> None:
     with pytest.raises(ValueError, match=error):
         replace(make_offer(), **changes)  # type: ignore[arg-type]
+
+
+def test_offer_enforces_acquisition_url_invariants() -> None:
+    offer = make_offer()
+    with pytest.raises(ValueError, match="manual_job_offer_has_url"):
+        replace(offer, source_url="https://jobs.example.com")
+    with pytest.raises(ValueError, match="url_job_offer_missing_url"):
+        replace(offer, source=JobSource.URL)
+    with pytest.raises(ValueError, match="url_job_offer_missing_url"):
+        replace(
+            offer,
+            source=JobSource.URL,
+            source_url="https://jobs.example.com",
+            canonical_url=" ",
+        )
 
 
 @pytest.mark.parametrize(

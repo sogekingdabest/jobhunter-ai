@@ -94,6 +94,8 @@ def make_offer(*, offer_id: UUID | None = None, source_id: UUID | None = None) -
         id=offer_id,
         evidence_source_id=source_id,
         source=JobSource.MANUAL,
+        source_url=None,
+        canonical_url=None,
         raw_text=JOB_TEXT,
         content_fingerprint="a" * 64,
         normalization_version="1.0",
