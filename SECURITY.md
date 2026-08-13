@@ -20,6 +20,8 @@ Do not include real CVs, API keys, access tokens, or third-party personal inform
 - Secrets stay outside the repository.
 - Personal data is minimized and excluded from logs where possible.
 - Uploaded files are validated and size-limited before processing.
+- DOCX parsing limits expanded archive size and uses hardened XML parsing; PDF parsing limits pages
+  and extracted text output.
 - Job descriptions, documents, model output, and browser AI results are untrusted input.
 - Remote URL imports must defend against SSRF and unsafe redirects before that feature ships.
 - Local AI failures must not silently send data to a cloud provider.

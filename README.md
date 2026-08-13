@@ -35,10 +35,12 @@ The repository currently contains the backend and frontend foundations:
 - unit and component tests;
 - PostgreSQL persistence infrastructure and versioned migrations;
 - document provenance models and root-confined local document storage;
+- deterministic text extraction for UTF-8 TXT, text-layer PDF, and DOCX;
 - a provenance-aware candidate profile aggregate and manual CRUD API;
 - linting, formatting, static typing, production builds, and CI.
 
-Document upload endpoints, parsing, matching, and AI workflows are not implemented yet.
+Document upload endpoints, structured CV extraction, matching, and AI workflows are not
+implemented yet.
 
 ## Requirements
 
@@ -83,7 +85,23 @@ provenance metadata. User filenames and local source paths are not retained.
 
 Supported source formats are currently UTF-8 text, PDF, and DOCX, with a configurable default
 limit of 10 MiB. Format validation uses file signatures or container structure instead of trusting
-an extension or client-provided MIME type. Upload and parsing endpoints will be added separately.
+an extension or client-provided MIME type.
+
+## Deterministic document parsing
+
+Validated documents can be parsed through `create_document_parsing_service`. Every parser returns
+the same in-memory contract: normalized text, non-overlapping offsets, optional PDF page numbers,
+and an explicit parser version. Parsed text is not persisted as another full copy of the CV.
+
+- TXT accepts UTF-8 with an optional BOM and normalizes line endings.
+- PDF extracts existing text layers page by page with `pypdf`; scanned/image-only and encrypted
+  files are reported as unsupported for extraction. OCR is intentionally out of scope.
+- DOCX reads only the main WordprocessingML document and applies limits to archive members,
+  expanded size, compression ratio, internal paths, and XML parsing.
+
+Documents remain untrusted input. Validation must run before parsing, and parser failures are
+returned as domain errors without attempting repairs through an LLM. Upload and processing
+endpoints will be added separately.
 
 ## Run the API
 
