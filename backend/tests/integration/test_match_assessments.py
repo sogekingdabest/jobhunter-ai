@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 from fastapi import status
 from fastapi.testclient import TestClient
 
+from jobhunter.ai.domain.embeddings import EmbeddingModel, EmbeddingVector
 from jobhunter.candidate.infrastructure.database.repository import (
     SqlAlchemyCandidateProfileRepository,
 )
@@ -14,7 +15,15 @@ from jobhunter.infrastructure.database.session import Database
 from jobhunter.jobs.application.normalization import ManualJobOfferService
 from jobhunter.jobs.infrastructure.database.repository import SqlAlchemyJobOfferRepository
 from jobhunter.main import create_app
-from jobhunter.matching.application.service import StructuredMatchingService
+from jobhunter.matching.application.service import MatchingService
+from jobhunter.matching.domain.semantic import (
+    SemanticDocument,
+    SemanticEmbedding,
+    SemanticSourceType,
+)
+from jobhunter.matching.infrastructure.database.embedding_repository import (
+    SqlAlchemySemanticEmbeddingRepository,
+)
 from jobhunter.matching.infrastructure.database.repository import (
     SqlAlchemyMatchAssessmentRepository,
 )
@@ -49,12 +58,27 @@ async def _exercise_match_repository(database_url: str) -> None:
             offer = await ManualJobOfferService(jobs).import_normalized(
                 f"{JOB_TEXT}\nRepository reference: {uuid4()}", make_normalization()
             )
-            service = StructuredMatchingService(candidates, jobs, assessments)
+            service = MatchingService(candidates, jobs, assessments)
 
             created = await service.assess(candidate.id, offer.id)
 
             assert await assessments.get(created.id) == created
             assert await assessments.get(UUID(int=0)) is None
+
+            document = SemanticDocument(
+                SemanticSourceType.CANDIDATE_SUMMARY,
+                candidate.id,
+                "Backend engineer building reliable services",
+                candidate_profile_id=candidate.id,
+            )
+            model = EmbeddingModel("google", "embeddinggemma-300M", "2025-09", 3)
+            embedding = SemanticEmbedding(
+                uuid4(), document, model, EmbeddingVector((1.0, 0.5, 0.25))
+            )
+            embedding_repository = SqlAlchemySemanticEmbeddingRepository(session)
+            assert await embedding_repository.get(document, model) is None
+            assert await embedding_repository.add_many((embedding,)) == (embedding,)
+            assert await embedding_repository.get(document, model) == embedding
     finally:
         await database.dispose()
 

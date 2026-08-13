@@ -12,11 +12,13 @@ from jobhunter.matching.domain.assessments import (
     MatchEvidence,
     RequirementGate,
 )
+from jobhunter.matching.domain.semantic import SemanticMatchEvidence
 from jobhunter.matching.infrastructure.database.models import (
     MatchAssessmentModel,
     MatchDimensionModel,
     MatchEvidenceModel,
     RequirementGateModel,
+    SemanticMatchEvidenceModel,
 )
 
 
@@ -44,6 +46,7 @@ class SqlAlchemyMatchAssessmentRepository:
                 MatchDimensionModel.evidence
             ),
             selectinload(MatchAssessmentModel.gates),
+            selectinload(MatchAssessmentModel.semantic_evidence),
         )
 
     async def _required(self, assessment_id: UUID) -> MatchAssessment:
@@ -64,6 +67,13 @@ def _to_model(assessment: MatchAssessment) -> MatchAssessmentModel:
         job_content_fingerprint=assessment.job_content_fingerprint,
         job_normalization_version=assessment.job_normalization_version,
         score=assessment.score,
+        structured_score=assessment.structured_score,
+        semantic_score=assessment.semantic_score,
+        semantic_weight=assessment.semantic_weight,
+        embedding_provider=assessment.embedding_provider,
+        embedding_model=assessment.embedding_model,
+        embedding_revision=assessment.embedding_revision,
+        embedding_dimensions=assessment.embedding_dimensions,
         recommendation=assessment.recommendation,
         assessed_at=assessment.assessed_at,
         dimensions=[
@@ -104,6 +114,19 @@ def _to_model(assessment: MatchAssessment) -> MatchAssessmentModel:
             )
             for position, gate in enumerate(assessment.gates)
         ],
+        semantic_evidence=[
+            SemanticMatchEvidenceModel(
+                id=evidence.id,
+                assessment_id=assessment.id,
+                position=position,
+                job_source_type=evidence.job_source_type,
+                job_source_id=evidence.job_source_id,
+                candidate_source_type=evidence.candidate_source_type,
+                candidate_source_id=evidence.candidate_source_id,
+                similarity=evidence.similarity,
+            )
+            for position, evidence in enumerate(assessment.semantic_evidence)
+        ],
     )
 
 
@@ -118,6 +141,24 @@ def _to_domain(model: MatchAssessmentModel) -> MatchAssessment:
         job_content_fingerprint=model.job_content_fingerprint,
         job_normalization_version=model.job_normalization_version,
         score=model.score,
+        structured_score=model.structured_score,
+        semantic_score=model.semantic_score,
+        semantic_weight=model.semantic_weight,
+        embedding_provider=model.embedding_provider,
+        embedding_model=model.embedding_model,
+        embedding_revision=model.embedding_revision,
+        embedding_dimensions=model.embedding_dimensions,
+        semantic_evidence=tuple(
+            SemanticMatchEvidence(
+                evidence.id,
+                evidence.job_source_type,
+                evidence.job_source_id,
+                evidence.candidate_source_type,
+                evidence.candidate_source_id,
+                evidence.similarity,
+            )
+            for evidence in model.semantic_evidence
+        ),
         recommendation=model.recommendation,
         dimensions=tuple(
             MatchDimension(

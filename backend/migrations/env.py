@@ -36,6 +36,8 @@ from jobhunter.matching.infrastructure.database.models import (
     MatchDimensionModel,
     MatchEvidenceModel,
     RequirementGateModel,
+    SemanticEmbeddingModel,
+    SemanticMatchEvidenceModel,
 )
 
 _document_models = (SourceDocumentModel, EvidenceSourceModel, EvidenceSpanModel)
@@ -55,6 +57,8 @@ _matching_models = (
     MatchDimensionModel,
     MatchEvidenceModel,
     RequirementGateModel,
+    SemanticEmbeddingModel,
+    SemanticMatchEvidenceModel,
 )
 
 config = context.config

@@ -20,7 +20,7 @@ JobHunter AI is an open-source application for structuring a master CV, evaluati
 ## Planned stack
 
 - **Backend:** Python, FastAPI, Pydantic, SQLAlchemy, Alembic
-- **Database:** PostgreSQL and pgvector when semantic matching is introduced
+- **Database:** PostgreSQL 18 and pgvector 0.8.6
 - **Frontend:** React, TypeScript, Vite
 - **AI:** provider-neutral contracts, browser-local models, local servers, and optional cloud providers
 - **Quality:** pytest, Ruff, mypy, pre-commit, and GitHub Actions
@@ -196,6 +196,28 @@ revision timestamp, job fingerprint and normalization version, compared values, 
 IDs, job fact IDs, outcomes, and stable explanation codes. This keeps results inspectable even if
 the candidate profile is edited later. Deleting the candidate or job also deletes its assessments
 to honor local data deletion.
+
+## Semantic and hybrid matching
+
+Semantic matching is isolated behind a provider-neutral `EmbeddingProvider`; application and
+domain code do not depend on Google, a cloud API, or a Python model runtime. Candidate summaries,
+work experience, and projects are compared with the offer description and responsibilities. Each
+semantic result points to the exact candidate and job source IDs used, while contact details are
+excluded from embedding inputs.
+
+Policy `hybrid-v1` combines the reproducible structured score (75%) with semantic similarity
+(25%). Required-requirement gates remain authoritative: semantic similarity can improve ranking
+and surface transferable experience, but it cannot turn a missing mandatory fact into a pass. If
+no embedding provider is configured, `structured-v1` remains fully operational.
+
+Embeddings are cached in PostgreSQL with pgvector using content hash, provider, model, revision,
+and dimensions as their identity. The MVP uses exact cosine calculations; an approximate HNSW
+index is deferred until corpus size and measured latency justify its recall and memory trade-offs.
+The current candidate model is
+[`google/embeddinggemma-300M`](https://ai.google.dev/gemma/docs/embeddinggemma): multilingual,
+2K context, and 768 dimensions by default. Its heavyweight runtime is not installed in the API;
+the included bilingual ranking harness must be run against any future adapter before enabling a
+specific model revision.
 
 ## Browser AI laboratory
 
