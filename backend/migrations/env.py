@@ -31,6 +31,12 @@ from jobhunter.jobs.infrastructure.database.models import (
     JobOfferModel,
     JobRequirementModel,
 )
+from jobhunter.matching.infrastructure.database.models import (
+    MatchAssessmentModel,
+    MatchDimensionModel,
+    MatchEvidenceModel,
+    RequirementGateModel,
+)
 
 _document_models = (SourceDocumentModel, EvidenceSourceModel, EvidenceSpanModel)
 _candidate_models = (
@@ -44,6 +50,12 @@ _candidate_models = (
     LanguageProficiencyModel,
 )
 _job_models = (JobOfferModel, JobOfferFieldModel, JobRequirementModel)
+_matching_models = (
+    MatchAssessmentModel,
+    MatchDimensionModel,
+    MatchEvidenceModel,
+    RequirementGateModel,
+)
 
 config = context.config
 
