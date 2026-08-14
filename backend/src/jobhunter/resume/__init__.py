@@ -1,0 +1,1 @@
+"""Tailored resume domain."""

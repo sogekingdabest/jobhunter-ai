@@ -39,6 +39,11 @@ from jobhunter.matching.infrastructure.database.models import (
     SemanticEmbeddingModel,
     SemanticMatchEvidenceModel,
 )
+from jobhunter.resume.infrastructure.database.models import (
+    ResumeFragmentModel,
+    ResumeSourceModel,
+    TailoredResumeModel,
+)
 
 _document_models = (SourceDocumentModel, EvidenceSourceModel, EvidenceSpanModel)
 _candidate_models = (
@@ -60,6 +65,7 @@ _matching_models = (
     SemanticEmbeddingModel,
     SemanticMatchEvidenceModel,
 )
+_resume_models = (TailoredResumeModel, ResumeFragmentModel, ResumeSourceModel)
 
 config = context.config
 
