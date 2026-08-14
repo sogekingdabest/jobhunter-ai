@@ -1,0 +1,1 @@
+"""Tailored resume SQLAlchemy adapter."""
