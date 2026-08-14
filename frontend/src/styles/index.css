@@ -249,3 +249,91 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
   .ds-callout { grid-template-columns: auto minmax(0, 1fr); }
   .ds-callout__action { grid-column: 2; justify-self: start; }
 }
+
+/* MVP workflow */
+.ai-lab-link { color: var(--ink-muted); font-size: 12px; font-weight: 650; }
+.ai-lab-link:hover { color: var(--ink); }
+.workspace-overview { display: grid; grid-template-columns: minmax(0, 1fr) 280px; align-items: center; gap: clamp(40px, 8vw, 100px); padding: 22px 0 80px; }
+.workspace-overview h1 { max-width: 760px; margin: 20px 0 22px; font-size: clamp(43px, 5.2vw, 72px); font-weight: 640; letter-spacing: -.06em; line-height: .99; }
+.workspace-overview h1 em { color: var(--brand); font-family: var(--font-serif); font-weight: 500; }
+.workspace-overview > div > p { max-width: 630px; margin: 0; color: var(--ink-muted); font-size: 17px; line-height: 1.65; }
+.progress-card { padding: 24px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface-raised); box-shadow: 0 24px 65px color-mix(in srgb, var(--ink) 8%, transparent); }
+.progress-card > span { color: var(--ink-muted); font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+.progress-card > strong { display: block; margin: 8px 0 15px; color: var(--brand); font-size: 48px; line-height: 1; }
+.progress-card > strong small { color: var(--ink-muted); font-size: 18px; }
+.progress-card > div { overflow: hidden; height: 7px; border-radius: 99px; background: var(--surface); }
+.progress-card > div i { display: block; height: 100%; border-radius: inherit; background: var(--brand); transition: width .25s ease; }
+.progress-card p { margin: 14px 0 0; color: var(--ink-muted); font-size: 11px; line-height: 1.5; }
+.workflow-feedback { position: sticky; top: 82px; z-index: 10; margin: -42px 0 28px; }
+.workflow-feedback .ds-callout { width: 100%; box-shadow: 0 14px 40px color-mix(in srgb, var(--ink) 10%, transparent); }
+.workflow-card { scroll-margin-top: 90px; margin-bottom: 22px; border: 1px solid var(--line); border-radius: 20px; background: color-mix(in srgb, var(--surface-raised) 75%, transparent); }
+.workflow-card > header { display: flex; align-items: center; gap: 15px; padding: 22px 25px; border-bottom: 1px solid var(--line); }
+.workflow-card > header span:not(.workflow-step) { color: var(--brand); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.workflow-card > header h2 { margin: 3px 0 0; font-size: 22px; letter-spacing: -.035em; }
+.workflow-step { display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 12px; color: var(--ink-muted); background: var(--surface); font-size: 12px; font-weight: 800; }
+.workflow-step--complete { color: var(--green); border-color: color-mix(in srgb, var(--green) 28%, var(--line)); background: var(--green-soft); }
+.workflow-form { display: grid; gap: 20px; padding: 26px; }
+.workflow-form > .ds-button { justify-self: start; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.form-grid:has(> :nth-child(3)) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ds-field select { appearance: auto; }
+.dependency-note { margin: -9px 0 0; color: var(--ink-muted); font-size: 11px; }
+.saved-summary { padding: 28px; }
+.saved-summary > div { display: grid; gap: 4px; }
+.saved-summary > div strong { font-size: 21px; }
+.saved-summary > div span, .saved-summary > p { color: var(--ink-muted); font-size: 12px; }
+.saved-summary ul { display: flex; flex-wrap: wrap; gap: 7px; padding: 0; margin: 20px 0; list-style: none; }
+.saved-summary li { padding: 6px 10px; border-radius: 99px; color: var(--brand); background: var(--brand-soft); font-size: 11px; font-weight: 700; }
+.saved-summary > p { margin: 0; }
+.empty-workflow { display: flex; align-items: center; gap: 18px; padding: 30px; }
+.empty-workflow > svg { flex: 0 0 auto; color: var(--brand); }
+.empty-workflow p { flex: 1; margin: 0; color: var(--ink-muted); font-size: 13px; }
+.assessment-layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 25px; padding: 28px; }
+.assessment-layout > .ds-button { grid-column: 2; justify-self: start; }
+.assessment-score { display: flex; align-items: center; flex-direction: column; justify-content: center; min-height: 170px; border-radius: 18px; color: var(--brand); background: var(--brand-soft); text-align: center; }
+.assessment-score strong { font-size: 56px; line-height: 1; }
+.assessment-score span { margin-top: 4px; font-size: 12px; }
+.assessment-score em { margin-top: 14px; padding: 5px 9px; border-radius: 99px; color: var(--ink); background: var(--surface-raised); font-size: 10px; font-style: normal; font-weight: 800; text-transform: uppercase; }
+.dimension-list { display: grid; gap: 9px; }
+.dimension-list article { padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); }
+.dimension-list article > div { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; text-transform: capitalize; }
+.dimension-list article > div span { color: var(--brand); font-weight: 800; }
+.dimension-list ul { display: grid; gap: 4px; padding: 0; margin: 9px 0 0; list-style: none; }
+.dimension-list li { color: var(--ink-muted); font-size: 11px; }
+.dimension-list li::before { content: "•"; margin-right: 7px; }
+.outcome-matched::before { color: var(--green); }
+.outcome-missing::before { color: var(--danger); }
+.resume-review { display: grid; gap: 13px; padding: 28px; }
+.review-status { justify-self: start; padding: 6px 10px; border-radius: 99px; color: var(--brand); background: var(--brand-soft); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.review-status--approved { color: var(--green); background: var(--green-soft); }
+.review-status--rejected { color: var(--danger); background: var(--danger-soft); }
+.resume-review article { padding: 18px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface-raised); }
+.resume-review article > span { color: var(--brand); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.resume-review article > p { margin: 9px 0 13px; font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+.resume-review details { color: var(--ink-muted); font-size: 11px; }
+.resume-review summary { cursor: pointer; font-weight: 700; }
+.resume-review blockquote { margin: 10px 0 0; padding: 10px 12px; border-left: 2px solid var(--green); background: var(--surface); }
+.resume-review cite { display: block; margin-top: 5px; color: var(--green); font-size: 9px; font-style: normal; text-transform: uppercase; }
+.review-actions, .data-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 8px; }
+.data-controls { scroll-margin-top: 90px; display: flex; align-items: center; justify-content: space-between; gap: 40px; margin: 70px 0; padding: 30px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.data-controls h2 { margin: 12px 0 7px; font-size: 24px; letter-spacing: -.035em; }
+.data-controls p { max-width: 610px; margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 1.55; }
+.data-actions { flex: 0 0 auto; justify-content: flex-end; }
+.browser-ai-section { scroll-margin-top: 90px; margin-top: 95px; }
+
+@media (max-width: 800px) {
+  .workspace-overview, .assessment-layout { grid-template-columns: 1fr; }
+  .progress-card { width: min(360px, 100%); }
+  .assessment-layout > .ds-button { grid-column: 1; }
+  .form-grid, .form-grid:has(> :nth-child(3)) { grid-template-columns: 1fr; }
+  .data-controls { align-items: flex-start; flex-direction: column; }
+  .data-actions { justify-content: flex-start; }
+}
+
+@media (max-width: 640px) {
+  .ai-lab-link { display: none; }
+  .workspace-overview { padding-bottom: 58px; }
+  .workspace-overview h1 { font-size: clamp(40px, 12vw, 56px); }
+  .workflow-card > header, .workflow-form, .saved-summary, .assessment-layout, .resume-review { padding: 20px; }
+  .empty-workflow { align-items: flex-start; flex-direction: column; padding: 22px; }
+}

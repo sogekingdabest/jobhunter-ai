@@ -4,7 +4,7 @@ from collections.abc import AsyncIterator
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from jobhunter.infrastructure.database.session import Database
@@ -139,3 +139,14 @@ async def get_job_offer(offer_id: UUID, service: Service) -> JobOfferResponse:
     except JobOfferNotFoundError as error:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "job_offer_not_found") from error
     return JobOfferResponse.model_validate(offer)
+
+
+@router.delete("/{offer_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_job_offer(offer_id: UUID, service: Service) -> Response:
+    """Delete one offer and the assessments and drafts derived from it."""
+
+    try:
+        await service.delete(offer_id)
+    except JobOfferNotFoundError as error:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "job_offer_not_found") from error
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

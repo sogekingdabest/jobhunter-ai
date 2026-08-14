@@ -68,6 +68,14 @@ def test_manual_job_offer_import_get_and_duplicate_response() -> None:
         missing = client.get("/job-offers/00000000-0000-0000-0000-000000000000")
         assert missing.status_code == status.HTTP_404_NOT_FOUND
 
+        deleted = client.delete(f"/job-offers/{created['id']}")
+        assert deleted.status_code == status.HTTP_204_NO_CONTENT
+        assert client.get(f"/job-offers/{created['id']}").status_code == status.HTTP_404_NOT_FOUND
+        assert (
+            client.delete("/job-offers/00000000-0000-0000-0000-000000000000").status_code
+            == status.HTTP_404_NOT_FOUND
+        )
+
 
 def test_url_preview_import_and_get_with_verified_content() -> None:
     database_url = get_test_database_url()

@@ -40,8 +40,8 @@ from jobhunter.jobs.domain.offers import (
     JobSource,
 )
 from jobhunter.jobs.ports.repository import (
-    JobOfferRepository,
     JobOfferRepositoryDuplicateError,
+    MutableJobOfferRepository,
 )
 
 NORMALIZATION_INSTRUCTION = """Normalize only facts explicitly present in job_offer_text.
@@ -77,7 +77,7 @@ class ManualJobOfferService:
 
     def __init__(
         self,
-        repository: JobOfferRepository,
+        repository: MutableJobOfferRepository,
         *,
         generation: StructuredGenerationService | None = None,
         id_factory: Callable[[], UUID] = uuid4,
@@ -148,6 +148,12 @@ class ManualJobOfferService:
         if offer is None:
             raise JobOfferNotFoundError
         return offer
+
+    async def delete(self, offer_id: UUID) -> None:
+        """Remove an imported offer and all derived records owned by it."""
+
+        if not await self._repository.delete(offer_id):
+            raise JobOfferNotFoundError
 
     def _ground(
         self,

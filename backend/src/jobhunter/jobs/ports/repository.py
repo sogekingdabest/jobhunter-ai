@@ -22,3 +22,9 @@ class JobOfferRepository(Protocol):
     async def get(self, offer_id: UUID) -> JobOffer | None: ...
 
     async def get_by_fingerprint(self, fingerprint: str) -> JobOffer | None: ...
+
+
+class MutableJobOfferRepository(JobOfferRepository, Protocol):
+    """Expanded boundary used only by job-offer lifecycle use cases."""
+
+    async def delete(self, offer_id: UUID) -> bool: ...

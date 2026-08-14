@@ -3,7 +3,7 @@
 from typing import cast
 from uuid import UUID
 
-from sqlalchemy import Select, select
+from sqlalchemy import Select, delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -77,6 +77,21 @@ class SqlAlchemyJobOfferRepository:
             self._statement().where(JobOfferModel.content_fingerprint == fingerprint)
         )
         return None if model is None else _to_domain(model)
+
+    async def delete(self, offer_id: UUID) -> bool:
+        """Delete an offer and its now-unreferenced source evidence."""
+
+        model = await self._session.scalar(self._statement().where(JobOfferModel.id == offer_id))
+        if model is None:
+            return False
+        evidence_source_id = model.evidence_source_id
+        await self._session.delete(model)
+        await self._session.flush()
+        await self._session.execute(
+            delete(EvidenceSourceModel).where(EvidenceSourceModel.id == evidence_source_id)
+        )
+        await self._session.commit()
+        return True
 
     def _statement(self) -> Select[tuple[JobOfferModel]]:
         return select(JobOfferModel).options(
