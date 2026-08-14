@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from jobhunter.ai.contracts.job_offers import JobOfferNormalizationOutput
 from jobhunter.config import Settings
 from jobhunter.jobs.api.routes import (
+    delete_job_offer,
     get_job_offer,
     get_url_service,
     import_job_offer_url,
@@ -63,6 +64,20 @@ async def test_routes_translate_duplicate_and_missing_errors() -> None:
 
     assert duplicate.value.status_code == status.HTTP_409_CONFLICT
     assert duplicate.value.detail == "duplicate_job_offer"
+    assert missing.value.status_code == status.HTTP_404_NOT_FOUND
+    assert missing.value.detail == "job_offer_not_found"
+
+
+@pytest.mark.asyncio
+async def test_delete_route_removes_offer_and_translates_missing_error() -> None:
+    service = ManualJobOfferService(InMemoryJobOfferRepository())
+    created = await import_manual_job_offer(request_payload(), service)
+
+    response = await delete_job_offer(created.id, service)
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    with pytest.raises(HTTPException) as missing:
+        await delete_job_offer(created.id, service)
     assert missing.value.status_code == status.HTTP_404_NOT_FOUND
     assert missing.value.detail == "job_offer_not_found"
 

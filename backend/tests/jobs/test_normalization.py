@@ -66,6 +66,9 @@ class InMemoryJobOfferRepository:
             None,
         )
 
+    async def delete(self, offer_id: UUID) -> bool:
+        return self.offers.pop(offer_id, None) is not None
+
 
 def make_service() -> tuple[ManualJobOfferService, InMemoryJobOfferRepository]:
     repository = InMemoryJobOfferRepository()
@@ -87,6 +90,19 @@ async def test_import_grounds_fields_requirements_and_deduplicates_candidates() 
     assert repository.evidence_source is not None
     assert repository.evidence_source.source_type is EvidenceSourceType.JOB_OFFER
     assert await service.get(offer.id) == offer
+
+
+@pytest.mark.asyncio
+async def test_delete_removes_an_offer_and_reports_missing_identity() -> None:
+    service, _ = make_service()
+    offer = await service.import_normalized(JOB_TEXT, make_normalization())
+
+    await service.delete(offer.id)
+
+    with pytest.raises(JobOfferNotFoundError):
+        await service.get(offer.id)
+    with pytest.raises(JobOfferNotFoundError):
+        await service.delete(offer.id)
 
 
 @pytest.mark.asyncio

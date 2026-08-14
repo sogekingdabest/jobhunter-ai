@@ -87,3 +87,6 @@ jobs:
       - name: Check frontend
         run: pnpm --dir frontend check
 
+      - name: Test MVP workflow end to end
+        run: pnpm --dir frontend test:e2e
+

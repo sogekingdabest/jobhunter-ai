@@ -64,6 +64,10 @@ async def _exercise_repository(database_url: str) -> None:
             assert stored_url_offer.source is JobSource.URL
             assert stored_url_offer.canonical_url == "https://jobs.example.com/jobs/backend"
 
+            assert await repository.delete(url_offer.id)
+            assert await repository.get(url_offer.id) is None
+            assert not await repository.delete(url_offer.id)
+
         async with database.session() as session:
             duplicate_repository = SqlAlchemyJobOfferRepository(session)
             grounded = service._ground(raw_text, make_normalization(), offer.content_fingerprint)

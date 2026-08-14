@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from jobhunter import __version__
+from jobhunter.api.observability import RequestObservabilityMiddleware
 from jobhunter.api.router import api_router
 from jobhunter.config import Settings, get_settings
 from jobhunter.infrastructure.database.session import Database
@@ -30,6 +31,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     application.state.settings = resolved_settings
     application.state.database = database
+    application.add_middleware(RequestObservabilityMiddleware)
     application.include_router(api_router)
     return application
 

@@ -9,6 +9,13 @@ export default defineConfig({
       "Cross-Origin-Embedder-Policy": "require-corp",
       "Cross-Origin-Opener-Policy": "same-origin",
     },
+    proxy: {
+      "/candidate-profiles": "http://127.0.0.1:8000",
+      "/job-offers": "http://127.0.0.1:8000",
+      "/match-assessments": "http://127.0.0.1:8000",
+      "/tailored-resumes": "http://127.0.0.1:8000",
+      "/health": "http://127.0.0.1:8000",
+    },
   },
   preview: {
     headers: {

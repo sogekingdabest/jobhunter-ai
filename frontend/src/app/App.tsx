@@ -1,45 +1,19 @@
-import { Icon, type IconName } from "../shared/ui/Icon";
-import { Button } from "../shared/ui/Button";
-import { ThemeToggle } from "../shared/ui/ThemeToggle";
 import { BrowserAILab } from "../features/browser-ai/BrowserAILab";
+import { MvpWorkspace } from "../features/workflow/MvpWorkspace";
+import { Icon, type IconName } from "../shared/ui/Icon";
+import { ThemeToggle } from "../shared/ui/ThemeToggle";
 
-const navigation: ReadonlyArray<{ label: string; icon: IconName }> = [
-  { label: "Overview", icon: "compass" },
-  { label: "Master profile", icon: "profile" },
-  { label: "Opportunities", icon: "briefcase" },
-  { label: "Resume studio", icon: "resume" },
-  { label: "Insights", icon: "chart" },
-];
-
-const principles: ReadonlyArray<{
-  title: string;
-  description: string;
-  icon: IconName;
-  accent: string;
-}> = [
-  {
-    title: "Explainable matching",
-    description: "Every score is broken down into skills, experience, language and location evidence.",
-    icon: "chart",
-    accent: "accent-blue",
-  },
-  {
-    title: "Truthful by design",
-    description: "Generated resume content stays connected to verified facts in your master profile.",
-    icon: "shield",
-    accent: "accent-green",
-  },
-  {
-    title: "Private when you want",
-    description: "Local and in-browser AI options keep sensitive career data under your control.",
-    icon: "sparkles",
-    accent: "accent-violet",
-  },
+const navigation: ReadonlyArray<{ label: string; href: string; icon: IconName }> = [
+  { label: "Overview", href: "#overview", icon: "compass" },
+  { label: "Master profile", href: "#master-profile", icon: "profile" },
+  { label: "Opportunity", href: "#opportunities", icon: "briefcase" },
+  { label: "Matching", href: "#matching", icon: "chart" },
+  { label: "Resume studio", href: "#resume-studio", icon: "resume" },
 ];
 
 function Brand() {
   return (
-    <a className="brand" href="#top" aria-label="JobHunter AI home">
+    <a className="brand" href="#overview" aria-label="JobHunter AI home">
       <span className="brand-mark"><Icon className="size-5" name="compass" /></span>
       <span>JobHunter <strong>AI</strong></span>
     </a>
@@ -49,13 +23,8 @@ function Brand() {
 function Navigation({ compact = false }: { compact?: boolean }) {
   return (
     <nav aria-label="Primary navigation" className={compact ? "mobile-nav" : "sidebar-nav"}>
-      {navigation.map(({ label, icon }, index) => (
-        <a
-          aria-current={index === 0 ? "page" : undefined}
-          className="nav-link"
-          href={`#${label.toLowerCase().replace(" ", "-")}`}
-          key={label}
-        >
+      {navigation.map(({ label, href, icon }, index) => (
+        <a aria-current={index === 0 ? "page" : undefined} className="nav-link" href={href} key={label}>
           <Icon className="size-5" name={icon} />
           <span>{label}</span>
         </a>
@@ -66,83 +35,26 @@ function Navigation({ compact = false }: { compact?: boolean }) {
 
 export function App() {
   return (
-    <div className="app-shell" id="top">
+    <div className="app-shell">
       <aside className="sidebar">
         <Brand />
         <Navigation />
-        <div className="trust-note">
-          <Icon className="size-4" name="shield" />
-          <span>Your profile remains your source of truth.</span>
-        </div>
+        <div className="trust-note"><Icon className="size-4" name="shield" /><span>Your profile remains the only source of candidate truth.</span></div>
       </aside>
-
       <div className="content-shell">
         <header className="topbar">
           <div className="mobile-brand"><Brand /></div>
-          <span className="status-pill"><span className="status-dot" />Local workspace</span>
+          <span className="status-pill"><span className="status-dot" />Local MVP</span>
+          <a className="ai-lab-link" href="#browser-ai">Browser AI lab</a>
           <ThemeToggle />
         </header>
-
         <main className="main-content">
-          <section className="hero" aria-labelledby="hero-title">
-            <div className="hero-copy">
-              <span className="eyebrow"><Icon className="size-4" name="sparkles" />Career intelligence, with evidence</span>
-              <h1 id="hero-title">Find the right role.<br /><em>Stay true to your story.</em></h1>
-              <p>
-                Build one trusted professional profile, understand why an opportunity fits,
-                and tailor every application without inventing a thing.
-              </p>
-              <div className="hero-actions">
-                <Button
-                  className="primary-button"
-                  endIcon={<span aria-hidden="true">→</span>}
-                  size="large"
-                >
-                  Create master profile
-                </Button>
-                <span className="preview-label">Foundation preview</span>
-              </div>
-            </div>
-
-            <div className="match-card" aria-label="Example explainable match preview">
-              <div className="match-card-header">
-                <div>
-                  <span className="card-kicker">Match preview</span>
-                  <h2>Backend Engineer</h2>
-                  <p>Acme Systems · Remote</p>
-                </div>
-                <div className="score-ring" aria-label="87 percent match"><strong>87</strong><span>%</span></div>
-              </div>
-              <div className="score-list">
-                {[["Skills", "92%"], ["Experience", "78%"], ["Location", "100%"]].map(([label, score]) => (
-                  <div className="score-row" key={label}>
-                    <span><Icon className="size-4" name="check" />{label}</span><strong>{score}</strong>
-                  </div>
-                ))}
-              </div>
-              <div className="evidence-note"><span />Every result links back to profile evidence.</div>
-            </div>
+          <MvpWorkspace />
+          <section className="browser-ai-section" id="browser-ai" aria-labelledby="browser-ai-title">
+            <div className="section-heading"><div><span className="section-index">LAB</span><h2 id="browser-ai-title">Optional in-browser AI</h2></div><p>This isolated experiment never receives workspace data automatically.</p></div>
+            <BrowserAILab />
           </section>
-
-          <section aria-labelledby="principles-title" className="principles-section">
-            <div className="section-heading">
-              <div><span className="section-index">01</span><h2 id="principles-title">Built around your real experience</h2></div>
-              <p>AI assists with interpretation and writing. Your verified career history remains in charge.</p>
-            </div>
-            <div className="principle-grid">
-              {principles.map(({ title, description, icon, accent }) => (
-                <article className="principle-card" key={title}>
-                  <span className={`principle-icon ${accent}`}><Icon className="size-6" name={icon} /></span>
-                  <h3>{title}</h3>
-                  <p>{description}</p>
-                  <span className="learn-more">Product principle <span aria-hidden="true">↗</span></span>
-                </article>
-              ))}
-            </div>
-          </section>
-          <BrowserAILab />
         </main>
-
         <Navigation compact />
       </div>
     </div>
