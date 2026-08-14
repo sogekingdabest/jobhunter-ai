@@ -35,4 +35,10 @@ Do not include real CVs, API keys, access tokens, or third-party personal inform
 - Browser runtime errors remain categorical; source prompts and generated text must not be copied
   into error messages or telemetry.
 - Generated claims require provenance and deterministic validation before acceptance.
+- HTTP observability is content-free: request bodies, source text, prompts, model output, and direct
+  personal identifiers are excluded from request-completion logs.
+
+The current trust boundaries, mitigations, and residual risks are documented in
+[THREAT_MODEL.md](THREAT_MODEL.md). The MVP binds its supported launcher to loopback and has no
+authentication; it must not be exposed directly to the public internet.
 

@@ -3,10 +3,9 @@
 JobHunter AI is an open-source application for structuring a master CV, evaluating job opportunities, and tailoring resumes without inventing experience, skills, certifications, or achievements.
 
 > [!NOTE]
-> The project is being built incrementally. Candidate profiles can now be managed through the API;
-> deterministic document parsing and grounded CV fact review are available as backend foundations;
-> grounded manual and public-URL job offer imports and explainable structured matching are also
-> available; semantic/hybrid matching and traceable tailored-resume drafts are now implemented.
+> The local-first MVP is complete. Its web workflow creates a master profile, imports a grounded
+> job offer, produces an explainable match, generates a traceable resume draft, and requires an
+> explicit user review before approval.
 
 ## Product principles
 
@@ -17,7 +16,7 @@ JobHunter AI is an open-source application for structuring a master CV, evaluati
 - Local and in-browser AI are first-class execution options; cloud processing requires explicit configuration and consent.
 - The application starts as a modular monolith and evolves only when operational needs justify it.
 
-## Planned stack
+## Stack
 
 - **Backend:** Python, FastAPI, Pydantic, SQLAlchemy, Alembic
 - **Database:** PostgreSQL 18 and pgvector 0.8.6
@@ -28,12 +27,12 @@ JobHunter AI is an open-source application for structuring a master CV, evaluati
 
 ## Current repository
 
-The repository currently contains the backend and frontend foundations:
+The repository contains a complete local MVP:
 
 - a minimal FastAPI application;
 - typed environment configuration;
 - `GET /health`;
-- a responsive React application shell with light, dark, and system themes;
+- a responsive React workflow with light, dark, and system themes;
 - unit and component tests;
 - PostgreSQL persistence infrastructure and versioned migrations;
 - document provenance models and root-confined local document storage;
@@ -51,11 +50,15 @@ The repository currently contains the backend and frontend foundations:
 - provider-neutral semantic matching, pgvector caching, and a reproducible hybrid score.
 - deterministic tailored-resume selection, optional guarded reformulation, fragment-level
   provenance, optimistic review, and persisted immutable source snapshots.
+- an end-to-end candidate → opportunity → matching → resume review workflow with local recovery,
+  JSON export, and deletion controls.
+- request correlation, content-free HTTP telemetry, and a Playwright acceptance test against the
+  real FastAPI and PostgreSQL stack.
 - an opt-in browser AI laboratory with capability detection, isolated Workers, cancellable model
   loading, and bilingual structured-output benchmarks.
 
-Document upload orchestration, production model adapters, rendered resume exports, and the complete
-end-to-end frontend workflow are not implemented yet.
+Document upload orchestration, production model adapters, PDF/DOCX rendering, authentication,
+personal ATS features, and labour-market analytics remain future increments beyond this MVP.
 
 ## Requirements
 
@@ -263,7 +266,7 @@ best effort because its factory does not expose an initialized engine until load
 ## Run the API
 
 ```bash
-uv run --directory backend uvicorn jobhunter.main:app --reload
+uv run --directory backend python run_api.py
 ```
 
 The API is then available at `http://127.0.0.1:8000`; its health endpoint is `GET /health`.
@@ -286,6 +289,7 @@ Grounded job offers expose:
 - `POST /job-offers/url/preview`
 - `POST /job-offers/url`
 - `GET /job-offers/{offer_id}`
+- `DELETE /job-offers/{offer_id}`
 
 Structured matching exposes:
 
@@ -315,6 +319,17 @@ pnpm --dir frontend dev
 
 The web application is then available at `http://127.0.0.1:5173`.
 
+The browser guides the user through the full local workflow. Manual job normalization is
+deliberately explicit in this first release: selected title, company, location, and requirement
+quotes must appear verbatim in the pasted offer. This makes the no-provider path deterministic and
+auditable. The optional browser AI laboratory remains isolated and never receives workspace data
+automatically.
+
+The workspace stores its current resource identities and API responses in browser local storage so
+the flow survives a refresh. **Export workspace** downloads that state as versioned JSON. **Delete
+workspace** removes the current offer, candidate, matching snapshots, resume drafts, and local
+browser state. The API is single-user and local-only; do not expose it to an untrusted network.
+
 ## Explore the design system
 
 ```bash
@@ -331,10 +346,15 @@ uv run --directory backend ruff format --check .
 uv run --directory backend mypy src tests
 uv run --directory backend pytest
 pnpm --dir frontend check
+pnpm --dir frontend test:e2e
 ```
 
 PostgreSQL integration tests run when `JOBHUNTER_TEST_DATABASE_URL` is set. CI always runs them
 against the same PostgreSQL major version used by the local Compose service.
+
+API responses include a validated or generated `X-Request-ID` and coarse `Server-Timing`. Request
+completion logs contain method, path, status, duration, and correlation ID only; bodies, CV text,
+job text, prompts, and generated content are intentionally excluded.
 
 Storybook interaction and accessibility tests run in Chromium. Install its managed test browser locally with:
 
@@ -354,7 +374,9 @@ Use short-lived `feature/...` or `fix/...` branches and open a pull request into
 
 ## Security and privacy
 
-Do not use real CVs, credentials, or personal data in fixtures, issues, or commits. Report vulnerabilities according to [SECURITY.md](SECURITY.md).
+Do not use real CVs, credentials, or personal data in fixtures, issues, or commits. Report
+vulnerabilities according to [SECURITY.md](SECURITY.md), and review the MVP trust boundaries and
+residual risks in [THREAT_MODEL.md](THREAT_MODEL.md).
 
 ## License
 
